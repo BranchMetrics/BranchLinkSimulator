@@ -11,6 +11,9 @@
 		C16B97912B759F9D00FB0631 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B97902B759F9D00FB0631 /* ContentView.swift */; };
 		C16B97932B759F9E00FB0631 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C16B97922B759F9E00FB0631 /* Assets.xcassets */; };
 		C16B97962B759F9E00FB0631 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C16B97952B759F9E00FB0631 /* Preview Assets.xcassets */; };
+		C16B979E2B75A01C00FB0631 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = C16B979D2B75A01C00FB0631 /* BranchSDK */; };
+		C16B97A02B75A0FA00FB0631 /* DeeplinkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B979F2B75A0FA00FB0631 /* DeeplinkDetailView.swift */; };
+		C16B97A22B75A18A00FB0631 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B97A12B75A18A00FB0631 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +22,10 @@
 		C16B97902B759F9D00FB0631 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C16B97922B759F9E00FB0631 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C16B97952B759F9E00FB0631 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		C16B979F2B75A0FA00FB0631 /* DeeplinkDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeeplinkDetailView.swift; sourceTree = "<group>"; };
+		C16B97A12B75A18A00FB0631 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C16B97A52B75A4F800FB0631 /* BranchLinkSimulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BranchLinkSimulator.entitlements; sourceTree = "<group>"; };
+		C16B97A62B75A5F700FB0631 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C16B979E2B75A01C00FB0631 /* BranchSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,7 +59,11 @@
 		C16B978D2B759F9D00FB0631 /* BranchLinkSimulator */ = {
 			isa = PBXGroup;
 			children = (
+				C16B97A62B75A5F700FB0631 /* Info.plist */,
+				C16B97A52B75A4F800FB0631 /* BranchLinkSimulator.entitlements */,
+				C16B97A12B75A18A00FB0631 /* AppDelegate.swift */,
 				C16B978E2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift */,
+				C16B979F2B75A0FA00FB0631 /* DeeplinkDetailView.swift */,
 				C16B97902B759F9D00FB0631 /* ContentView.swift */,
 				C16B97922B759F9E00FB0631 /* Assets.xcassets */,
 				C16B97942B759F9E00FB0631 /* Preview Content */,
@@ -83,6 +95,9 @@
 			dependencies = (
 			);
 			name = BranchLinkSimulator;
+			packageProductDependencies = (
+				C16B979D2B75A01C00FB0631 /* BranchSDK */,
+			);
 			productName = BranchLinkSimulator;
 			productReference = C16B978B2B759F9D00FB0631 /* BranchLinkSimulator.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +126,9 @@
 				Base,
 			);
 			mainGroup = C16B97822B759F9D00FB0631;
+			packageReferences = (
+				C16B979C2B75A01C00FB0631 /* XCRemoteSwiftPackageReference "ios-branch-sdk-spm" */,
+			);
 			productRefGroup = C16B978C2B759F9D00FB0631 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -137,8 +155,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C16B97A22B75A18A00FB0631 /* AppDelegate.swift in Sources */,
 				C16B97912B759F9D00FB0631 /* ContentView.swift in Sources */,
 				C16B978F2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift in Sources */,
+				C16B97A02B75A0FA00FB0631 /* DeeplinkDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,12 +289,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = BranchLinkSimulator/BranchLinkSimulator.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BranchLinkSimulator/Preview Content\"";
 				DEVELOPMENT_TEAM = R63EM248DP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BranchLinkSimulator/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -298,12 +320,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = BranchLinkSimulator/BranchLinkSimulator.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BranchLinkSimulator/Preview Content\"";
 				DEVELOPMENT_TEAM = R63EM248DP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BranchLinkSimulator/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -344,6 +368,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C16B979C2B75A01C00FB0631 /* XCRemoteSwiftPackageReference "ios-branch-sdk-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BranchMetrics/ios-branch-sdk-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C16B979D2B75A01C00FB0631 /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C16B979C2B75A01C00FB0631 /* XCRemoteSwiftPackageReference "ios-branch-sdk-spm" */;
+			productName = BranchSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C16B97832B759F9D00FB0631 /* Project object */;
 }
