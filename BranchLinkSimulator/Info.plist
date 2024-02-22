@@ -2,31 +2,31 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>branch_universal_link_domains</key>
-    <array>
-        <string>branchlinksimulator.app.link</string>
-        <string>branchlinksimulator-alternate.app.link</string>
-        <string>branchlinksimulator.test.app.link</string>
-    </array>
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>branchlinksimulator</string>
-            </array>
-            <key>CFBundleURLName</key>
-            <string>io.Branch.BranchLinkSimulator</string>
-        </dict>
-    </array>
-    <key>branch_key</key>
-    <dict>
-        <key>live</key>
-        <string>key_live_hshD4wiPK2sSxfkZqkH30ggmyBfmGmD7</string>
-        <key>test</key>
-        <string>key_test_cFaqWupQV4BTCgpXFkQY1jgiAFggSdPl</string>
-    </dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>io.Branch.BranchLinkSimulator</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>branchlinksimulator</string>
+			</array>
+		</dict>
+	</array>
+	<key>branch_key</key>
+	<dict>
+		<key>live</key>
+		<string>key_live_hshD4wiPK2sSxfkZqkH30ggmyBfmGmD7</string>
+		<key>test</key>
+		<string>key_test_cFaqWupQV4BTCgpXFkQY1jgiAFggSdPl</string>
+	</dict>
+	<key>branch_universal_link_domains</key>
+	<array>
+		<string>branchlinksimulator.app.link</string>
+		<string>branchlinksimulator-alternate.app.link</string>
+		<string>branchlinksimulator.test.app.link</string>
+	</array>
 </dict>
 </plist>
