@@ -18,7 +18,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         
+        Branch.setAPIUrl("https://protected-api-test.branch.io")
         Branch.getInstance().enableLogging()
+        
+        // Retrieve or create the bls_session_id
+        let blsSessionId: String
+        if let savedId = UserDefaults.standard.string(forKey: "blsSessionId") {
+            blsSessionId = savedId
+        } else {
+            // Generate a new UUID if one does not exist
+            blsSessionId = UUID().uuidString
+            UserDefaults.standard.set(blsSessionId, forKey: "blsSessionId")
+        }
+        
+        // Set the bls_session_id in Branch request metadata
+        Branch.getInstance().setRequestMetadataKey("bls_session_id", value: blsSessionId)
+
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             print(params as? [String: AnyObject] ?? {})
             if let params = params as? [String: AnyObject] {

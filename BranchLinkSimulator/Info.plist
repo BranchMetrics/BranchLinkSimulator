@@ -8,7 +8,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>io.Branch.BranchLinkSimulator</string>
+			<string>io.branch.link-simulator</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>branchlinksimulator</string>
@@ -24,6 +24,7 @@
 	</dict>
 	<key>branch_universal_link_domains</key>
 	<array>
+		<string>allergics.org</string>
 		<string>branchlinksimulator.app.link</string>
 		<string>branchlinksimulator-alternate.app.link</string>
 		<string>branchlinksimulator.test.app.link</string>

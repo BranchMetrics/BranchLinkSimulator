@@ -14,7 +14,7 @@ struct BranchLinkSimulatorApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
                 .environmentObject(appDelegate.deepLinkViewModel)
                 .onOpenURL(perform: { url in
                     Branch.getInstance().handleDeepLink(url)

@@ -10,12 +10,13 @@ import BranchSDK
 import AppTrackingTransparency
 import AdSupport
 
-struct ContentView: View {
+struct HomeView: View {
     @EnvironmentObject var deepLinkViewModel: DeepLinkViewModel
     @State private var showingToast = false
     @State private var toastMessage: String = ""
-    @State private var branchAPIURL: String = "https://api3.branch.io"
+    @State private var branchAPIURL: String = "https://protected-api-test.branch.io"
     @State private var eventAlias: String = ""
+    @State private var sessionID: String = UserDefaults.standard.string(forKey: "blsSessionId") ?? UUID().uuidString
 
     var body: some View {
         NavigationView {
@@ -62,7 +63,7 @@ struct ContentView: View {
                         .headerProminence(.standard)
                         .listRowSeparator(.hidden)
                         
-                        Section(header: Text("Settings"), footer: Text("Branch SDK v3.2.0").frame(maxWidth: .infinity)) {
+                        Section(header: Text("Settings"), footer: Text("Branch SDK v3.3.0").frame(maxWidth: .infinity)) {
                             VStack(alignment: .leading) {
                                 Text("Branch API URL")
                                     .font(.system(size: 16, weight: .semibold))
@@ -77,6 +78,15 @@ struct ContentView: View {
                                     .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(.secondary)
                                 TextField("Eg. customAlias", text: $eventAlias)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                            }
+                            .padding(.vertical, 8)
+                            
+                            VStack(alignment: .leading) {
+                                Text("Branch Link Simulator Session ID")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.secondary)
+                                TextField("ID Goes Here", text: $sessionID)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                             }
                             .padding(.vertical, 8)
@@ -134,6 +144,9 @@ struct ContentView: View {
         print("Setting API URL to  \(branchAPIURL)")
         Branch.setAPIUrl(branchAPIURL)
                 
+        UserDefaults.standard.set(sessionID, forKey: "blsSessionId")
+        Branch.getInstance().setRequestMetadataKey("bls_session_id", value: sessionID)
+        
         self.showToast(message: "Saved Settings!")
      }
     
@@ -193,5 +206,5 @@ extension View {
 
 
 #Preview {
-    ContentView()
+    HomeView()
 }
