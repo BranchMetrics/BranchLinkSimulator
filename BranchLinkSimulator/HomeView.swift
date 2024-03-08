@@ -14,10 +14,13 @@ struct HomeView: View {
     @EnvironmentObject var deepLinkViewModel: DeepLinkViewModel
     @State private var showingToast = false
     @State private var toastMessage: String = ""
-    @State private var branchAPIURL: String = "https://protected-api-test.branch.io"
-    @State private var eventAlias: String = ""
+    @State private var branchAPIURL: String = "https://protected-api.branch.io"
+    @State private var eventAlias: String = UserDefaults.standard.string(forKey: "customerEventAlias") ?? ""
     @State private var sessionID: String = UserDefaults.standard.string(forKey: "blsSessionId") ?? UUID().uuidString
 
+    @State private var showingEventActionSheet = false
+    @State private var selectedEventType: BranchStandardEvent = .purchase
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -41,7 +44,7 @@ struct HomeView: View {
                         .headerProminence(.standard)
                         
                         Section(header: Text("Events")) {
-                            Button(action: sendStandardEvent) {
+                            Button(action: { self.showingEventActionSheet = true }) {
                                 Label("Send Standard Event", systemImage: "paperplane.fill")
                                     .labelStyle(.titleAndIcon)
                                     .foregroundColor(.white)
@@ -49,6 +52,17 @@ struct HomeView: View {
                                     .frame(maxWidth: .infinity)
                                     .background(Color.blue)
                                     .cornerRadius(8)
+                            }
+                            .actionSheet(isPresented: $showingEventActionSheet) {
+                                ActionSheet(title: Text("Choose Event Type"), message: nil, buttons: [
+                                    .default(Text("Purchase"), action: { sendEventOfType(.purchase) }),
+                                    .default(Text("Add to Cart"), action: { sendEventOfType(.addToCart) }),
+                                    .default(Text("Login"), action: { sendEventOfType(.login) }),
+                                    .default(Text("Search"), action: { sendEventOfType(.search) }),
+                                    .default(Text("Share"), action: { sendEventOfType(.share) }),
+
+                                    .cancel()
+                                ])
                             }
                             Button(action: sendCustomEvent) {
                                 Label("Send Custom Event", systemImage: "paperplane")
@@ -113,24 +127,23 @@ struct HomeView: View {
         }
     }
     
-    func sendStandardEvent() {
-        let branchUniversalObject = BranchUniversalObject(canonicalIdentifier: "standardEvent")
-        let event = BranchEvent.standardEvent(.purchase)
+    func sendEventOfType(_ eventType: BranchStandardEvent) {
+        let event = BranchEvent.standardEvent(eventType)
         event.alias = eventAlias
+        event.customData["bls_session_id"] = sessionID
         event.logEvent { result, error in
             if error == nil {
-                self.showToast(message: "Sent Standard Event!")
+                self.showToast(message: "Sent \(eventType.rawValue) Event!")
             } else {
-                self.showToast(message: "Error Sending Standard Event!")
+                self.showToast(message: "Error Sending \(eventType.rawValue) Event!")
             }
         }
-        
     }
     
     func sendCustomEvent() {
-        let branchUniversalObject = BranchUniversalObject(canonicalIdentifier: "customEvent")
         let event = BranchEvent.customEvent(withName:"testedCustomEvent")
         event.alias = eventAlias
+        event.customData["bls_session_id"] = sessionID
         event.logEvent { result, error in
             if error == nil {
                 self.showToast(message: "Sent Custom Event!")
@@ -144,7 +157,9 @@ struct HomeView: View {
         print("Setting API URL to  \(branchAPIURL)")
         Branch.setAPIUrl(branchAPIURL)
                 
+        UserDefaults.standard.set(eventAlias, forKey: "customerEventAlias")
         UserDefaults.standard.set(sessionID, forKey: "blsSessionId")
+        
         Branch.getInstance().setRequestMetadataKey("bls_session_id", value: sessionID)
         
         self.showToast(message: "Saved Settings!")

@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         
-        Branch.setAPIUrl("https://protected-api-test.branch.io")
+        Branch.setAPIUrl("https://protected-api.branch.io")
         Branch.getInstance().enableLogging()
         
         // Retrieve or create the bls_session_id
