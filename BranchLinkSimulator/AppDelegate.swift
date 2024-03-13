@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Branch.setAPIUrl("https://protected-api.branch.io")
         Branch.getInstance().enableLogging()
-        
+
         // Retrieve or create the bls_session_id
         let blsSessionId: String
         if let savedId = UserDefaults.standard.string(forKey: "blsSessionId") {

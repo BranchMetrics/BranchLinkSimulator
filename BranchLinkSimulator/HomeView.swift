@@ -21,6 +21,9 @@ struct HomeView: View {
     @State private var showingEventActionSheet = false
     @State private var selectedEventType: BranchStandardEvent = .purchase
     
+    @State private var showingQRSheet = false
+    @State private var qrCodeImage: UIImage? = nil
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -72,6 +75,32 @@ struct HomeView: View {
                                     .frame(maxWidth: .infinity)
                                     .background(Color.blue)
                                     .cornerRadius(8)
+                            }
+                            Button(action: createURL) {
+                                Label("Create Branch Link", systemImage: "link")
+                                    .labelStyle(.titleAndIcon)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.blue)
+                                    .cornerRadius(8)
+                            }
+                            Button(action: createQRCode) {
+                                Label("Create Branch QR Code", systemImage: "qrcode")
+                                    .labelStyle(.titleAndIcon)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.blue)
+                                    .cornerRadius(8)
+                            }
+                            .sheet(isPresented: $showingQRSheet) {
+                                if let qrImage = qrCodeImage {
+                                    Image(uiImage: qrImage)
+                                        .interpolation(.none)
+                                        .resizable()
+                                        .scaledToFit()
+                                }
                             }
                         }
                         .headerProminence(.standard)
@@ -184,6 +213,35 @@ struct HomeView: View {
                         print("Failed to get IDFA")
                     }
                 }
+            }
+        }
+    }
+    
+    func createURL() {
+        let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "item/12345")
+        let lp: BranchLinkProperties = BranchLinkProperties()
+
+        buo.getShortUrl(with: lp) { url, error in
+            if (error != nil) {
+                self.showToast(message: "Error creating link: \(error)")
+            } else {
+                self.showToast(message: "Created \(url ?? "N/A")")
+            }
+        }
+    }
+    
+    func createQRCode() {
+        let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "item/12345")
+        let lp: BranchLinkProperties = BranchLinkProperties()
+        let qrCode = BranchQRCode()
+        
+        qrCode.getAsImage(buo, linkProperties: lp) { image, error in
+            if (error != nil) {
+                self.showToast(message: "Error creating QR Code: \(error)")
+
+            } else {
+                self.qrCodeImage = image
+                self.showingQRSheet = true
             }
         }
     }
