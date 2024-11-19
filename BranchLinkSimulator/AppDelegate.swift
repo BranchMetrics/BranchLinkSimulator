@@ -8,9 +8,17 @@
 import SwiftUI
 import BranchSDK
 
+struct AlertItem: Identifiable {
+    var id: String { message }
+    var message: String
+}
+
+var store = RoundTripStore()
+
 class DeepLinkViewModel: ObservableObject {
     @Published var deepLinkHandled = false
     @Published var deepLinkData: [String: AnyObject]? = nil
+    @Published var errorItem: AlertItem? = nil
 }
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,8 +26,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         
-        Branch.setAPIUrl("https://protected-api.branch.io")
-        Branch.getInstance().enableLogging()
+        let config = loadConfigOrDefault()
+        Branch.setAPIUrl(config.apiUrl)
+        Branch.setBranchKey(config.branchKey)
+        
+        Branch.enableLogging(at: .debug) { msg, logLevel, err in
+            store.processLog(msg)
+        }
 
         // Retrieve or create the bls_session_id
         let blsSessionId: String
@@ -36,6 +49,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
             print(params as? [String: AnyObject] ?? {})
+            if let error = error {
+                var message = "Failed to initialize Branch SDK: \(error.localizedDescription)."
+                if config.staging {
+                  message += " Are you connected to VPN?"
+                }
+                self.deepLinkViewModel.errorItem = AlertItem(message: message)
+            }
             if let params = params as? [String: AnyObject] {
                 if let clickedBranchLink = params["+clicked_branch_link"] as? NSNumber, clickedBranchLink.boolValue == true {
                     DispatchQueue.main.async {

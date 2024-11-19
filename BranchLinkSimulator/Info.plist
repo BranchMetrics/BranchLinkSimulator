@@ -28,6 +28,15 @@
 		<string>branchlinksimulator.app.link</string>
 		<string>branchlinksimulator-alternate.app.link</string>
 		<string>branchlinksimulator.test.app.link</string>
+		<string>ac-sandbox.branchbeta.link</string>
+		<string>ac-sandbox-alternate.branchbeta.link</string>
+		<string>ac-sandbox.test.branchbeta.link</string>
+		<string>freedom-external-services.branchbeta.link</string>
+		<string>freedom-external-services-alternate.branchbeta.link</string>
+		<string>freedom-external-services.test.branchbeta.link</string>
+		<string>freedom-prod.app.link</string>
+		<string>freedom-prod-alternate.app.link</string>
+		<string>freedom-prod.test.app.link</string>
 	</array>
 </dict>
 </plist>
