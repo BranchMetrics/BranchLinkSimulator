@@ -94,18 +94,30 @@ struct HomeView: View {
                                     .background(Color.blue)
                                     .cornerRadius(8)
                             }
+<<<<<<< HEAD
                             .sheet(isPresented: $showingQRSheet) {
+=======
+                            .sheet(isPresented: .constant(showingQRSheet), onDismiss: {
+                                showingQRSheet = false
+                            }) {
+>>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
                                 if let qrImage = qrCodeImage {
                                     Image(uiImage: qrImage)
                                         .interpolation(.none)
                                         .resizable()
                                         .scaledToFit()
+<<<<<<< HEAD
+=======
+                                } else {
+                                    Text("No QR Code Available")
+>>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
                                 }
                             }
                         }
                         .headerProminence(.standard)
                         .listRowSeparator(.hidden)
                         
+<<<<<<< HEAD
                         Section(header: Text("Settings"), footer: Text("Branch SDK v3.3.0").frame(maxWidth: .infinity)) {
                             VStack(alignment: .leading) {
                                 Text("Branch API URL")
@@ -116,6 +128,21 @@ struct HomeView: View {
                             }
                             .padding(.vertical, 8)
                             
+=======
+                        NavigationLink(destination: RequestView(viewModel: requestViewModel)) {
+                            Text("Api Request Log")
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(8)
+                        }
+                        
+                        Section(header: Text("Api Settings").frame(maxWidth: .infinity)) {
+                            ApiSwitcherView()
+                        }
+                        
+                        Section(header: Text("Event Settings"), footer: Text("Branch SDK v3.3.0").frame(maxWidth: .infinity)) {
+>>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
                             VStack(alignment: .leading) {
                                 Text("Customer Event Alias")
                                     .font(.system(size: 16, weight: .semibold))
@@ -154,6 +181,16 @@ struct HomeView: View {
         .onAppear {
             deepLinkViewModel.deepLinkHandled = false
         }
+<<<<<<< HEAD
+=======
+        .alert(item: $deepLinkViewModel.errorItem) { errorItem in
+                    Alert(
+                        title: Text("Error"),
+                        message: Text(errorItem.message),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
+>>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
     }
     
     func sendEventOfType(_ eventType: BranchStandardEvent) {
@@ -222,7 +259,11 @@ struct HomeView: View {
         let lp: BranchLinkProperties = BranchLinkProperties()
 
         buo.getShortUrl(with: lp) { url, error in
+<<<<<<< HEAD
             if (error != nil) {
+=======
+            if let error = error {
+>>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
                 self.showToast(message: "Error creating link: \(error)")
             } else {
                 self.showToast(message: "Created \(url ?? "N/A")")
@@ -233,6 +274,7 @@ struct HomeView: View {
     func createQRCode() {
         let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "item/12345")
         let lp: BranchLinkProperties = BranchLinkProperties()
+<<<<<<< HEAD
         let qrCode = BranchQRCode()
         
         qrCode.getAsImage(buo, linkProperties: lp) { image, error in
@@ -245,6 +287,22 @@ struct HomeView: View {
             }
         }
     }
+=======
+
+        let qrCode = BranchQRCode()
+        qrCode.getAsImage(buo, linkProperties: lp) { image, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.showToast(message: "Error creating QR Code: \(error.localizedDescription)")
+                } else if let image = image {
+                    self.qrCodeImage = image
+                    self.showingQRSheet = true
+                }
+            }
+        }
+    }
+
+>>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
 }
 
 extension View {

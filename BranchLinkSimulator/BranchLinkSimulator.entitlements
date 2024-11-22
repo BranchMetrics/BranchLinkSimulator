@@ -4,6 +4,18 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
+<<<<<<< HEAD
+=======
+		<string>applinks:freedom-external-services.branchbeta.link</string>
+		<string>applinks:freedom-external-services-alternate.branchbeta.link</string>
+		<string>applinks:freedom-external-services.test.branchbeta.link</string>
+		<string>applinks:ac-sandbox.branchbeta.link</string>
+		<string>ac-sandbox-alternate.branchbeta.link</string>
+		<string>ac-sandbox.test.branchbeta.link</string>
+		<string>applinks:freedom-prod.test.app.link</string>
+		<string>applinks:freedom-prod-alternate.app.link</string>
+		<string>applinks:freedom-prod.app.link</string>
+>>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
 		<string>applinks:branchlinksimulator.app.link</string>
 		<string>applinks:branchlinksimulator-alternate.app.link</string>
 		<string>applinks:branchlinksimulator.test.app.link</string>

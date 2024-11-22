@@ -28,6 +28,18 @@
 		<string>branchlinksimulator.app.link</string>
 		<string>branchlinksimulator-alternate.app.link</string>
 		<string>branchlinksimulator.test.app.link</string>
+<<<<<<< HEAD
+=======
+		<string>ac-sandbox.branchbeta.link</string>
+		<string>ac-sandbox-alternate.branchbeta.link</string>
+		<string>ac-sandbox.test.branchbeta.link</string>
+		<string>freedom-external-services.branchbeta.link</string>
+		<string>freedom-external-services-alternate.branchbeta.link</string>
+		<string>freedom-external-services.test.branchbeta.link</string>
+		<string>freedom-prod.app.link</string>
+		<string>freedom-prod-alternate.app.link</string>
+		<string>freedom-prod.test.app.link</string>
+>>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
 	</array>
 </dict>
 </plist>
