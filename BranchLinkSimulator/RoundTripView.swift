@@ -1,15 +1,15 @@
 import SwiftUI
 
-struct RequestView: View {
-    @ObservedObject var viewModel: RequestViewModel
+struct RoundTripView: View {
+    @ObservedObject var store: RoundTripStore
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(viewModel.roundTrips) { roundTrip in
+                ForEach(store.roundTrips) { roundTrip in
                     NavigationLink(destination: RoundTripDetailView(roundTrip: roundTrip)) {
                         VStack(alignment: .leading) {
-                            Text(roundTrip.request.url)
+                            Text(roundTrip.url)
                                 .font(.headline)
                             Text(roundTrip.timestamp.formattedDateString())
                                 .font(.caption)
@@ -34,7 +34,7 @@ struct RoundTripDetailView: View {
 
     var body: some View {
         Form {
-            VariableView(label: "URL", value: roundTrip.request.url)
+            VariableView(label: "URL", value: roundTrip.url)
             
             Section(header: Text("Request")
                 .font(.headline)
@@ -57,8 +57,6 @@ struct RoundTripDetailView: View {
         }
     }
 }
-
-
 
 struct VariableView: View {
     var label: String

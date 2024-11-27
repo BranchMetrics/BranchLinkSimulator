@@ -18,6 +18,8 @@ struct AlertItem: Identifiable {
     var message: String
 }
 
+var store = RoundTripStore()
+
 class DeepLinkViewModel: ObservableObject {
     @Published var deepLinkHandled = false
     @Published var deepLinkData: [String: AnyObject]? = nil
@@ -39,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.setBranchKey(config.branchKey)
         
         Branch.enableLogging(at: .debug) { msg, logLevel, err in
-            processLog(msg)
+            store.processLog(msg)
         }
 >>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
 

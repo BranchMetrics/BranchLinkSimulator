@@ -3,7 +3,7 @@ import BranchSDK
 
 let SELECTED_CONFIG_NAME = "selectedConfigName"
 
-struct ApiSwitcherView: View {
+struct ApiSettingsView: View {
     @State private var selectedConfig: ApiConfiguration = loadConfigOrDefault()
 
     var body: some View {
@@ -31,7 +31,6 @@ struct ApiSwitcherView: View {
 }
 
 func loadConfigOrDefault() -> ApiConfiguration {
-    
     loadConfig() ?? apiConfigurationsMap[STAGING] ?? ApiConfiguration(branchKey: "N/A", apiUrl: "N/A", appId: "N/A", staging: false)
 }
 
@@ -132,6 +131,6 @@ struct ApiButton: View {
 
 struct ApiSwitcherView_Previews: PreviewProvider {
     static var previews: some View {
-        ApiSwitcherView()
+        ApiSettingsView()
     }
 }

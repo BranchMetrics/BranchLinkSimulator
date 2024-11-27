@@ -118,6 +118,7 @@ struct HomeView: View {
                         .listRowSeparator(.hidden)
                         
 <<<<<<< HEAD
+<<<<<<< HEAD
                         Section(header: Text("Settings"), footer: Text("Branch SDK v3.3.0").frame(maxWidth: .infinity)) {
                             VStack(alignment: .leading) {
                                 Text("Branch API URL")
@@ -130,6 +131,9 @@ struct HomeView: View {
                             
 =======
                         NavigationLink(destination: RequestView(viewModel: requestViewModel)) {
+=======
+                        NavigationLink(destination: RoundTripView(store: store)) {
+>>>>>>> ba06d66 ([other] ENGMT-1881: updates for staging)
                             Text("Api Request Log")
                                 .padding()
                                 .background(Color.blue)
@@ -138,7 +142,7 @@ struct HomeView: View {
                         }
                         
                         Section(header: Text("Api Settings").frame(maxWidth: .infinity)) {
-                            ApiSwitcherView()
+                            ApiSettingsView()
                         }
                         
                         Section(header: Text("Event Settings"), footer: Text("Branch SDK v3.3.0").frame(maxWidth: .infinity)) {

@@ -7,14 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-<<<<<<< HEAD
-=======
-		422D52352CED496A0027F9D7 /* ApiConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422D52342CED496A0027F9D7 /* ApiConfiguration.swift */; };
-		422D52372CED50230027F9D7 /* ApiSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422D52362CED50230027F9D7 /* ApiSwitcherView.swift */; };
-		422D52392CEEBCC40027F9D7 /* BranchRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422D52382CEEBCC40027F9D7 /* BranchRequest.swift */; };
-		422D523B2CEFBAA30027F9D7 /* RequestModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422D523A2CEFBAA30027F9D7 /* RequestModel.swift */; };
-		422D523D2CEFBAD60027F9D7 /* RequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422D523C2CEFBAD60027F9D7 /* RequestView.swift */; };
->>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
 		C16B978F2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B978E2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift */; };
 		C16B97912B759F9D00FB0631 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B97902B759F9D00FB0631 /* HomeView.swift */; };
 		C16B97932B759F9E00FB0631 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C16B97922B759F9E00FB0631 /* Assets.xcassets */; };
@@ -26,14 +18,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-<<<<<<< HEAD
-=======
-		422D52342CED496A0027F9D7 /* ApiConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiConfiguration.swift; sourceTree = "<group>"; };
-		422D52362CED50230027F9D7 /* ApiSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiSwitcherView.swift; sourceTree = "<group>"; };
-		422D52382CEEBCC40027F9D7 /* BranchRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchRequest.swift; sourceTree = "<group>"; };
-		422D523A2CEFBAA30027F9D7 /* RequestModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestModel.swift; sourceTree = "<group>"; };
-		422D523C2CEFBAD60027F9D7 /* RequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestView.swift; sourceTree = "<group>"; };
->>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
 		C16B978B2B759F9D00FB0631 /* BranchLinkSimulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BranchLinkSimulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C16B978E2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchLinkSimulatorApp.swift; sourceTree = "<group>"; };
 		C16B97902B759F9D00FB0631 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -87,14 +71,6 @@
 				C16B97902B759F9D00FB0631 /* HomeView.swift */,
 				C16B97922B759F9E00FB0631 /* Assets.xcassets */,
 				C16B97942B759F9E00FB0631 /* Preview Content */,
-<<<<<<< HEAD
-=======
-				422D52342CED496A0027F9D7 /* ApiConfiguration.swift */,
-				422D52362CED50230027F9D7 /* ApiSwitcherView.swift */,
-				422D52382CEEBCC40027F9D7 /* BranchRequest.swift */,
-				422D523A2CEFBAA30027F9D7 /* RequestModel.swift */,
-				422D523C2CEFBAD60027F9D7 /* RequestView.swift */,
->>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
 			);
 			path = BranchLinkSimulator;
 			sourceTree = "<group>";
@@ -191,22 +167,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-<<<<<<< HEAD
 				C16B97A22B75A18A00FB0631 /* AppDelegate.swift in Sources */,
 				C16B97912B759F9D00FB0631 /* HomeView.swift in Sources */,
 				C16B978F2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift in Sources */,
 				C16B97A02B75A0FA00FB0631 /* DeeplinkDetailView.swift in Sources */,
-=======
-				422D52352CED496A0027F9D7 /* ApiConfiguration.swift in Sources */,
-				C16B97A22B75A18A00FB0631 /* AppDelegate.swift in Sources */,
-				422D52372CED50230027F9D7 /* ApiSwitcherView.swift in Sources */,
-				C16B97912B759F9D00FB0631 /* HomeView.swift in Sources */,
-				C16B978F2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift in Sources */,
-				422D523D2CEFBAD60027F9D7 /* RequestView.swift in Sources */,
-				C16B97A02B75A0FA00FB0631 /* DeeplinkDetailView.swift in Sources */,
-				422D52392CEEBCC40027F9D7 /* BranchRequest.swift in Sources */,
-				422D523B2CEFBAA30027F9D7 /* RequestModel.swift in Sources */,
->>>>>>> 7631405 ([other] ENGMT-1881: updates for staging)
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
