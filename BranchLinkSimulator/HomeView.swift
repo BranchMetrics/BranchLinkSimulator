@@ -94,28 +94,28 @@ struct HomeView: View {
                                     .background(Color.blue)
                                     .cornerRadius(8)
                             }
-                            .sheet(isPresented: $showingQRSheet) {
+                            .sheet(isPresented: .constant(showingQRSheet), onDismiss: {
+                                showingQRSheet = false
+                            }) {
                                 if let qrImage = qrCodeImage {
                                     Image(uiImage: qrImage)
                                         .interpolation(.none)
                                         .resizable()
                                         .scaledToFit()
+                                } else {
+                                    Text("No QR Code Available")
                                 }
                             }
                         }
                         .headerProminence(.standard)
                         .listRowSeparator(.hidden)
+                    
                         
-                        Section(header: Text("Settings"), footer: Text("Branch SDK v3.3.0").frame(maxWidth: .infinity)) {
-                            VStack(alignment: .leading) {
-                                Text("Branch API URL")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(.secondary)
-                                TextField("Branch API URL", text: $branchAPIURL)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                            }
-                            .padding(.vertical, 8)
-                            
+                        Section("API Settings") {
+                            ApiSettingsView()
+                        }
+                        
+                        Section(header: Text("Event Settings"), footer: Text("Branch SDK v3.7.0").frame(maxWidth: .infinity)) {
                             VStack(alignment: .leading) {
                                 Text("Customer Event Alias")
                                     .font(.system(size: 16, weight: .semibold))
@@ -154,6 +154,13 @@ struct HomeView: View {
         .onAppear {
             deepLinkViewModel.deepLinkHandled = false
         }
+        .alert(item: $deepLinkViewModel.errorItem) { errorItem in
+                    Alert(
+                        title: Text("Error"),
+                        message: Text(errorItem.message),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
     }
     
     func sendEventOfType(_ eventType: BranchStandardEvent) {
@@ -222,7 +229,7 @@ struct HomeView: View {
         let lp: BranchLinkProperties = BranchLinkProperties()
 
         buo.getShortUrl(with: lp) { url, error in
-            if (error != nil) {
+            if let error = error {
                 self.showToast(message: "Error creating link: \(error)")
             } else {
                 self.showToast(message: "Created \(url ?? "N/A")")
@@ -233,18 +240,20 @@ struct HomeView: View {
     func createQRCode() {
         let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "item/12345")
         let lp: BranchLinkProperties = BranchLinkProperties()
-        let qrCode = BranchQRCode()
-        
-        qrCode.getAsImage(buo, linkProperties: lp) { image, error in
-            if (error != nil) {
-                self.showToast(message: "Error creating QR Code: \(error)")
 
-            } else {
-                self.qrCodeImage = image
-                self.showingQRSheet = true
+        let qrCode = BranchQRCode()
+        qrCode.getAsImage(buo, linkProperties: lp) { image, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.showToast(message: "Error creating QR Code: \(error.localizedDescription)")
+                } else if let image = image {
+                    self.qrCodeImage = image
+                    self.showingQRSheet = true
+                }
             }
         }
     }
+
 }
 
 extension View {
