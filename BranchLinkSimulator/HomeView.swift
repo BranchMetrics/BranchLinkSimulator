@@ -109,20 +109,13 @@ struct HomeView: View {
                         }
                         .headerProminence(.standard)
                         .listRowSeparator(.hidden)
+                    
                         
-                        NavigationLink(destination: RoundTripView(store: store)) {
-                            Text("Api Request Log")
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
-                        }
-                        
-                        Section(header: Text("Api Settings").frame(maxWidth: .infinity)) {
+                        Section("API Settings") {
                             ApiSettingsView()
                         }
                         
-                        Section(header: Text("Event Settings"), footer: Text("Branch SDK v3.3.0").frame(maxWidth: .infinity)) {
+                        Section(header: Text("Event Settings"), footer: Text("Branch SDK v3.7.0").frame(maxWidth: .infinity)) {
                             VStack(alignment: .leading) {
                                 Text("Customer Event Alias")
                                     .font(.system(size: 16, weight: .semibold))

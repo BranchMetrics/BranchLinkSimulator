@@ -4,27 +4,24 @@ struct RoundTripView: View {
     @ObservedObject var store: RoundTripStore
 
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(store.roundTrips) { roundTrip in
-                    NavigationLink(destination: RoundTripDetailView(roundTrip: roundTrip)) {
-                        VStack(alignment: .leading) {
-                            Text(roundTrip.url)
-                                .font(.headline)
-                            Text(roundTrip.timestamp.formattedDateString())
-                                .font(.caption)
+        List {
+            ForEach(store.roundTrips) { roundTrip in
+                NavigationLink(destination: RoundTripDetailView(roundTrip: roundTrip)) {
+                    VStack(alignment: .leading) {
+                        Text(roundTrip.url)
+                            .font(.headline)
+                        Text(roundTrip.timestamp.formattedDateString())
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                        if let response = roundTrip.response {
+                            Text("Status Code: \(response.statusCode)")
+                                .font(.subheadline)
                                 .foregroundColor(.gray)
-                            if let response = roundTrip.response {
-                                Text("Status Code: \(response.statusCode)")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                            }
                         }
                     }
                 }
             }
-            .navigationTitle("Requests")
-        }
+        }.navigationTitle("Requests")
     }
 }
 
@@ -65,7 +62,7 @@ struct VariableView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Text("\(label):")
+                Text("\(label)")
                     .font(.body)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.leading)
@@ -82,9 +79,7 @@ struct VariableView: View {
                 .multilineTextAlignment(.leading)
         }
         .multilineTextAlignment(.leading)
-        .background(Color(.systemGray6))
         .cornerRadius(10)
-        .buttonStyle(BorderlessButtonStyle())
     }
 }
 

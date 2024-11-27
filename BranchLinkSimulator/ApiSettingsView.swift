@@ -4,34 +4,71 @@ import BranchSDK
 let SELECTED_CONFIG_NAME = "selectedConfigName"
 
 struct ApiSettingsView: View {
-    @State private var selectedConfig: ApiConfiguration = loadConfigOrDefault()
+    @State private var selectedConfig: ApiConfiguration
+    @State private var showReloadAlert = false
 
+    init() {
+        selectedConfig = loadConfigOrDefault()
+    }
+    
     var body: some View {
-        VStack(spacing: 10) {
-            ApiInfoView(label: "Branch Key", value: selectedConfig.branchKey)
-            ApiInfoView(label: "Api Url", value: selectedConfig.apiUrl)
-            ApiInfoView(label: "App Id", value: selectedConfig.appId)
+        ApiInfoView(label: "Branch Key", value: selectedConfig.branchKey)
+        ApiInfoView(label: "Api Url", value: selectedConfig.apiUrl)
+        ApiInfoView(label: "App Id", value: selectedConfig.appId)
 
-            VStack {
-                HStack(spacing: 5) {
-                    ApiButton(configName: STAGING, selectedConfig: $selectedConfig)
-                    ApiButton(configName: PRODUCTION, selectedConfig: $selectedConfig)
-                }.frame(maxWidth: .infinity)
-
-                HStack(spacing: 5) {
-                    ApiButton(configName: STAGING_AC, selectedConfig: $selectedConfig)
-                    ApiButton(configName: PRODUCTION_AC, selectedConfig: $selectedConfig)
-                }.frame(maxWidth: .infinity)
+        Menu {
+            ForEach(apiConfigurationsMap.keys.sorted(), id: \.self) { configName in
+                Button(action: { switchToConfig(key: configName) }) {
+                    Text(configName)
+                }
             }
-            .buttonStyle(BorderlessButtonStyle())
-            .frame(maxWidth: .infinity)
+        } label: {
+            HStack {
+                Text("Selected: \(selectedConfig.name)")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                Spacer()
+                Image(systemName: "chevron.down")
+                    .padding(.trailing)
+            }
         }
-        .padding()
+        .alert(isPresented: $showReloadAlert) {
+            Alert(
+                title: Text("Configuration Changed"),
+                message: Text("You need to reload the app to apply the new API configuration."),
+                primaryButton: .default(Text("Close App")) {
+                    exit(0)
+                },
+                secondaryButton: .cancel()
+            )
+        }
+    }
+    
+    private func switchToConfig(key: String) {
+        guard let config = apiConfigurationsMap[key] else { return }
+        if selectedConfig != config {
+            selectedConfig = config
+            saveConfig(configName: getConfigName(selectedConfig))
+            showReloadAlert = true
+        }
+    }
+    
+    func getConfigName(_ config: ApiConfiguration) -> String {
+        for (key, value) in apiConfigurationsMap {
+            if value == config {
+                return key
+            }
+        }
+        return STAGING
+    }
+    
+    func saveConfig(configName: String) {
+        UserDefaults.standard.set(configName, forKey: SELECTED_CONFIG_NAME)
     }
 }
 
 func loadConfigOrDefault() -> ApiConfiguration {
-    loadConfig() ?? apiConfigurationsMap[STAGING] ?? ApiConfiguration(branchKey: "N/A", apiUrl: "N/A", appId: "N/A", staging: false)
+    loadConfig() ?? apiConfigurationsMap[STAGING] ?? ApiConfiguration(name: "N/A", branchKey: "N/A", apiUrl: "N/A", appId: "N/A", staging: false)
 }
 
 func loadConfig() -> ApiConfiguration? {
@@ -69,63 +106,6 @@ struct ApiInfoView: View {
         .background(Color(.systemGray6))
         .cornerRadius(10)
         .buttonStyle(BorderlessButtonStyle())
-    }
-}
-
-struct ApiButton: View {
-    var configName: String
-    @State private var showReloadAlert = false
-    @Binding var selectedConfig: ApiConfiguration
-    
-    var body: some View {
-        Button(action: { switchToConfig(key: configName) }) {
-            Text(configName)
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(getButtonColor())
-                .foregroundColor(.white)
-                .cornerRadius(8)
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-                .truncationMode(.tail)
-        }
-        .alert(isPresented: $showReloadAlert) {
-            Alert(
-                title: Text("Configuration Changed"),
-                message: Text("You need to reload the app to apply the new API configuration."),
-                primaryButton: .default(Text("Close App")) {
-                    exit(0)
-                },
-                secondaryButton: .cancel()
-            )
-        }
-        .frame(maxWidth: .infinity)
-    }
-    
-    private func switchToConfig(key: String) {
-        guard let config = apiConfigurationsMap[key] else { return }
-        if selectedConfig != config {
-            selectedConfig = config
-            saveConfig(configName: getConfigName(selectedConfig))
-            showReloadAlert = true
-        }
-    }
-    
-    private func getButtonColor() -> Color {
-        return selectedConfig == apiConfigurationsMap[configName] ? Color.blue : Color.gray
-    }
-    
-    func getConfigName(_ config: ApiConfiguration) -> String {
-        for (key, value) in apiConfigurationsMap {
-            if value == config {
-                return key
-            }
-        }
-        return STAGING
-    }
-    
-    func saveConfig(configName: String) {
-        UserDefaults.standard.set(configName, forKey: SELECTED_CONFIG_NAME)
     }
 }
 
