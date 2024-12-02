@@ -120,8 +120,7 @@ struct HomeView: View {
                         Section(header: Text("Event Settings"), footer: Text("Branch SDK v3.7.0").frame(maxWidth: .infinity)) {
                             VStack(alignment: .leading) {
                                 Text("Customer Event Alias")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(.secondary)
+                                    .font(.headline)
                                 TextField("Eg. customAlias", text: $eventAlias)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                             }
@@ -129,8 +128,7 @@ struct HomeView: View {
                             
                             VStack(alignment: .leading) {
                                 Text("Branch Link Simulator Session ID")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(.secondary)
+                                    .font(.headline)
                                 TextField("ID Goes Here", text: $sessionID)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                             }

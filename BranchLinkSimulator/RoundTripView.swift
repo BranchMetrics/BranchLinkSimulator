@@ -33,25 +33,20 @@ struct RoundTripDetailView: View {
         Form {
             VariableView(label: "URL", value: roundTrip.url)
             
-            Section(header: Text("Request")
-                .font(.headline)
-                .foregroundColor(.primary)
-            ) {
+            Section("Request") {
                 VariableView(label: "Headers", value: roundTrip.request.headers)
                 VariableView(label: "Body", value: roundTrip.request.body)
             }
             
             if let response = roundTrip.response {
-                Section(header: Text("Response")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                ) {
+                Section("Response") {
                     VariableView(label: "Status Code", value: response.statusCode)
                     VariableView(label: "Headers", value: response.headers)
                     VariableView(label: "Body", value: response.body)
                 }
             }
         }
+        .navigationTitle("Request")
     }
 }
 
@@ -63,8 +58,7 @@ struct VariableView: View {
         VStack(alignment: .leading) {
             HStack {
                 Text("\(label)")
-                    .font(.body)
-                    .fontWeight(.bold)
+                    .font(.headline)
                     .multilineTextAlignment(.leading)
                 Spacer()
                 Button(action: {
