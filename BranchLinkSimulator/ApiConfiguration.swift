@@ -47,7 +47,7 @@ var apiConfigurationsMap: [String: ApiConfiguration] = [
     PRODUCTION: ApiConfiguration(
         name: PRODUCTION,
         branchKey: "key_live_iDiV7ZewvDm9GIYxUnwdFdmmvrc9m3Aw",
-        apiUrl: "https://api2.branch.io",
+        apiUrl: "https://api3.branch.io",
         appId: "1364964166783226677",
         staging: false
     )

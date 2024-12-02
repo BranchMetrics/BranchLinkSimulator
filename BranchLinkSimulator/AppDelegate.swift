@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.setAPIUrl(config.apiUrl)
         Branch.setBranchKey(config.branchKey)
         
-        Branch.enableLogging(at: .debug) { msg, logLevel, err in
+        Branch.enableLogging(at: .verbose) { msg, logLevel, err in
             self.store.processLog(msg)
         }
 

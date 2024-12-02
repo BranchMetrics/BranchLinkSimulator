@@ -64,6 +64,8 @@ class RoundTripStore: ObservableObject {
     }
     
     func processLog(_ log: String) {
+        print("[BranchSDK]\(log)")
+
         if log.contains("[BNCServerInterface preparePostRequest"){
             let request = parseRequestLog(log)
             addRoundTrip(with: request, url: parseUrl(log) ?? FAILED)
