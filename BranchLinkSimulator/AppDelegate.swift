@@ -13,8 +13,6 @@ struct AlertItem: Identifiable {
     var message: String
 }
 
-var store = RoundTripStore()
-
 class DeepLinkViewModel: ObservableObject {
     @Published var deepLinkHandled = false
     @Published var deepLinkData: [String: AnyObject]? = nil
@@ -23,7 +21,8 @@ class DeepLinkViewModel: ObservableObject {
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var deepLinkViewModel = DeepLinkViewModel()
-
+    var store = RoundTripStore()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         
         let config = loadConfigOrDefault()
@@ -31,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.setBranchKey(config.branchKey)
         
         Branch.enableLogging(at: .debug) { msg, logLevel, err in
-            store.processLog(msg)
+            self.store.processLog(msg)
         }
 
         // Retrieve or create the bls_session_id

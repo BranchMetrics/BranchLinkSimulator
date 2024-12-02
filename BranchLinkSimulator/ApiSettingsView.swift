@@ -6,41 +6,50 @@ let SELECTED_CONFIG_NAME = "selectedConfigName"
 struct ApiSettingsView: View {
     @State private var selectedConfig: ApiConfiguration
     @State private var showReloadAlert = false
+    private var store: RoundTripStore
 
-    init() {
+    init(store: RoundTripStore) {
         selectedConfig = loadConfigOrDefault()
+        self.store = store
     }
     
     var body: some View {
         ApiInfoView(label: "Branch Key", value: selectedConfig.branchKey)
-        ApiInfoView(label: "Api Url", value: selectedConfig.apiUrl)
-        ApiInfoView(label: "App Id", value: selectedConfig.appId)
+        ApiInfoView(label: "API URL", value: selectedConfig.apiUrl)
+        ApiInfoView(label: "App ID", value: selectedConfig.appId)
 
-        Menu {
-            ForEach(apiConfigurationsMap.keys.sorted(), id: \.self) { configName in
-                Button(action: { switchToConfig(key: configName) }) {
-                    Text(configName)
+        HStack {
+            Text("API Config")
+                .font(.headline)
+
+            Spacer()
+            
+            Menu {
+                ForEach(apiConfigurationsMap.keys.sorted(), id: \.self) { configName in
+                    Button(action: { switchToConfig(key: configName) }) {
+                        Text(configName)
+                    }
+                }
+            } label: {
+                HStack {
+                    Text("\(selectedConfig.name)")
+                    Image(systemName: "chevron.down")
                 }
             }
-        } label: {
-            HStack {
-                Text("Selected: \(selectedConfig.name)")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                Spacer()
-                Image(systemName: "chevron.down")
-                    .padding(.trailing)
+            .alert(isPresented: $showReloadAlert) {
+                Alert(
+                    title: Text("Configuration Changed"),
+                    message: Text("You need to reload the app to apply the new API configuration."),
+                    primaryButton: .default(Text("Close App")) {
+                        exit(0)
+                    },
+                    secondaryButton: .cancel()
+                )
             }
         }
-        .alert(isPresented: $showReloadAlert) {
-            Alert(
-                title: Text("Configuration Changed"),
-                message: Text("You need to reload the app to apply the new API configuration."),
-                primaryButton: .default(Text("Close App")) {
-                    exit(0)
-                },
-                secondaryButton: .cancel()
-            )
+        
+        NavigationLink(destination: RoundTripView(store: store)) {
+            Label("API Request Log", systemImage: "doc.text.below.ecg.fill")
         }
     }
     
@@ -85,13 +94,13 @@ struct ApiInfoView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("\(label):")
-                .font(.body)
-                .fontWeight(.bold)
+            Text("\(label)")
+                .font(.headline)
                 .multilineTextAlignment(.leading)
             HStack {
                 Text("\(value)")
                     .font(.body)
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.leading)
                 Spacer()
                 Button(action: {
@@ -103,14 +112,5 @@ struct ApiInfoView: View {
             }
         }
         .multilineTextAlignment(.leading)
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
-        .buttonStyle(BorderlessButtonStyle())
-    }
-}
-
-struct ApiSwitcherView_Previews: PreviewProvider {
-    static var previews: some View {
-        ApiSettingsView()
     }
 }
