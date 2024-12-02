@@ -12,6 +12,8 @@ import AdSupport
 
 struct HomeView: View {
     @EnvironmentObject var deepLinkViewModel: DeepLinkViewModel
+    @EnvironmentObject var store: RoundTripStore
+
     @State private var showingToast = false
     @State private var toastMessage: String = ""
     @State private var branchAPIURL: String = "https://protected-api.branch.io"
@@ -112,7 +114,7 @@ struct HomeView: View {
                     
                         
                         Section("API Settings") {
-                            ApiSettingsView()
+                            ApiSettingsView(store: store)
                         }
                         
                         Section(header: Text("Event Settings"), footer: Text("Branch SDK v3.7.0").frame(maxWidth: .infinity)) {

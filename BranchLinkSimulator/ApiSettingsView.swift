@@ -6,9 +6,11 @@ let SELECTED_CONFIG_NAME = "selectedConfigName"
 struct ApiSettingsView: View {
     @State private var selectedConfig: ApiConfiguration
     @State private var showReloadAlert = false
+    private var store: RoundTripStore
 
-    init() {
+    init(store: RoundTripStore) {
         selectedConfig = loadConfigOrDefault()
+        self.store = store
     }
     
     var body: some View {
@@ -41,6 +43,10 @@ struct ApiSettingsView: View {
                 },
                 secondaryButton: .cancel()
             )
+        }
+        
+        NavigationLink(destination: RoundTripView(store: store)) {
+            Label("API Request Log", systemImage: "doc.text.below.ecg.fill")
         }
     }
     
@@ -106,11 +112,5 @@ struct ApiInfoView: View {
         .background(Color(.systemGray6))
         .cornerRadius(10)
         .buttonStyle(BorderlessButtonStyle())
-    }
-}
-
-struct ApiSwitcherView_Previews: PreviewProvider {
-    static var previews: some View {
-        ApiSettingsView()
     }
 }
