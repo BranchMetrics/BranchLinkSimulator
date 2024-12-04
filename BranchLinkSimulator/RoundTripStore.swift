@@ -64,13 +64,12 @@ class RoundTripStore: ObservableObject {
     }
     
     func processLog(_ log: String) {
-        print(log)
-        if log.contains("[BNCServerInterface preparePostRequest") 
-            || log.contains("[BNCServerInterface postRequest") {
+        print("[BranchSDK]\(log)")
+
+        if log.contains("[BNCServerInterface preparePostRequest"){
             let request = parseRequestLog(log)
             addRoundTrip(with: request, url: parseUrl(log) ?? FAILED)
-        } else if log.contains("[BNCServerInterface processServerResponse") 
-                    || log.contains ("[BNCServerInterface genericHTTPRequest:retryNumber:callback:retryHandler:] <NSHTTPURLResponse: ") {
+        } else if log.contains("[BNCServerInterface processServerResponse") {
             let response = parseResponseLog(log)
             addResponse(response)
         } else {

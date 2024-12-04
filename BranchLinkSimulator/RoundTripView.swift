@@ -21,13 +21,7 @@ struct RoundTripView: View {
                     }
                 }
             }
-        }
-        .navigationTitle("Requests")
-        .overlay {
-            if store.roundTrips.isEmpty {
-                ContentUnavailableView.init("No Requests", systemImage: "nosign", description: Text("No requests have been logged yet."))
-            }
-        }
+        }.navigationTitle("Requests")
     }
 }
 
