@@ -68,7 +68,7 @@ struct ApiSettingsView: View {
                 return key
             }
         }
-        return STAGING
+        return PRODUCTION
     }
     
     func saveConfig(configName: String) {
@@ -77,7 +77,7 @@ struct ApiSettingsView: View {
 }
 
 func loadConfigOrDefault() -> ApiConfiguration {
-    loadConfig() ?? apiConfigurationsMap[STAGING] ?? ApiConfiguration(name: "N/A", branchKey: "N/A", apiUrl: "N/A", appId: "N/A", staging: false)
+    loadConfig() ?? apiConfigurationsMap[PRODUCTION] ?? ApiConfiguration(name: "N/A", branchKey: "N/A", apiUrl: "N/A", appId: "N/A", staging: false)
 }
 
 func loadConfig() -> ApiConfiguration? {
