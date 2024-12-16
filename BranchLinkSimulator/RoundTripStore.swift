@@ -1,4 +1,5 @@
 import Foundation
+import BranchSDK
 
 class RoundTripStore: ObservableObject {
     let FAILED = "failed to parse"
@@ -63,64 +64,40 @@ class RoundTripStore: ObservableObject {
         }
     }
     
-    func processLog(_ log: String) {
-        print("\(log)")
-        if log.contains("[BNCServerInterface preparePostRequest")
-            || log.contains("[BNCServerInterface postRequest") {
-            let request = parseRequestLog(log)
-            addRoundTrip(with: request, url: parseUrl(log) ?? FAILED)
-        } else if log.contains("[BNCServerInterface processServerResponse")
-                    || log.contains ("[BNCServerInterface genericHTTPRequest:retryNumber:callback:retryHandler:] <NSHTTPURLResponse: ") {
-            let response = parseResponseLog(log)
-            addResponse(response)
-        } else {
-            print(log)
+    func processLog(_ request: NSMutableURLRequest?, _ response: BNCServerResponse?) {
+        if let req = request {
+            let branchReq = process(request: req)
+            addRoundTrip(with: branchReq, url: req.url?.absoluteString ?? FAILED)
+        }
+        if let resp = response {
+            let branchResp = process(response: resp)
+            addResponse(branchResp)
         }
     }
 
-    func parseUrl(_ log: String) -> String? {
-        if let urlRange = log.range(of: "(?<=URL: ).*?(?= \\})", options: .regularExpression) {
-            return String(log[urlRange])
-        }
-        return nil
-    }
-
-    func parseHeaders(_ log: String) -> String? {
-        if let headersStart = log.range(of: "Headers {")?.upperBound,
-           let headersEnd = log.range(of: "}\nBody {")?.lowerBound {
-            return String("{\(log[headersStart..<headersEnd])").trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-        return nil
-    }
-
-    func parseBody(_ log: String) -> String? {
-        if let bodyStart = log.range(of: "Body {")?.upperBound {
-            return String("{\(log[bodyStart...])").trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-        return nil
-    }
-
-
-    func parseRequestLog(_ log: String) -> BranchRequest {
+    func process(request req: NSMutableURLRequest) -> BranchRequest {
+        let body = req.httpBody.flatMap { String(data: $0, encoding: .utf8) }
+        
         return BranchRequest(
-            headers: parseHeaders(log) ?? FAILED,
-            body: parseBody(log) ?? FAILED
+            headers: req.allHTTPHeaderFields?.description ?? FAILED,
+            body: body ?? FAILED
         )
     }
-
-
-    func parseResponseLog(_ log: String) -> BranchResponse {
-        let statusCode = log.range(of: "(?<=Status Code: )\\d+", options: .regularExpression)
-            .flatMap { Int(log[$0]) }
-            .map { String($0) }
-
-        return BranchResponse(
-            statusCode: statusCode ?? FAILED,
-            headers: parseHeaders(log) ?? FAILED,
-            body: parseBody(log) ?? FAILED
-        )
+    
+    func process(response resp: BNCServerResponse) -> BranchResponse {
+        let statusCode = String(resp.statusCode.intValue)
+        
+        var body = FAILED
+        if let dictionary = resp.data as? NSDictionary {
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
+                body = String(data: jsonData, encoding: .utf8) ?? FAILED
+            } catch {
+                print("Failed to serialize dictionary: \(error)")
+            }
+        }
+        return BranchResponse(statusCode: statusCode, body: body)
     }
-
 }
 
 

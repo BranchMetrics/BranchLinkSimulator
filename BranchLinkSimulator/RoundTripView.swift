@@ -47,7 +47,6 @@ struct RoundTripDetailView: View {
             if let response = roundTrip.response {
                 Section("Response") {
                     VariableView(label: "Status Code", value: response.statusCode)
-                    VariableView(label: "Headers", value: response.headers)
                     VariableView(label: "Body", value: response.body)
                 }
             }
