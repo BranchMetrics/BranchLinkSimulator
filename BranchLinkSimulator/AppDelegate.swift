@@ -29,8 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.setAPIUrl(config.apiUrl)
         Branch.setBranchKey(config.branchKey)
         
-        Branch.enableLogging(at: .verbose) { msg, logLevel, err in
-            self.store.processLog(msg)
+        Branch.enableLogging(at: .verbose) { msg, logLevel, err, request, response in
+            self.store.processLog(request, response)
         }
 
         // Retrieve or create the bls_session_id

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import BranchSDK
 
 struct RoundTrip: Identifiable, Codable {
     let id: UUID
@@ -30,7 +31,6 @@ struct BranchRequest: Codable {
 
 struct BranchResponse: Codable {
     var statusCode: String
-    var headers: String
     var body: String
 }
 
