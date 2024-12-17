@@ -33,7 +33,7 @@ struct ApiSettingsView: View {
             } label: {
                 HStack {
                     Text("\(selectedConfig.name)")
-                    Image(systemName: "chevron.down")
+                    Image(systemName: "chevron.up.chevron.down")
                 }
             }
             .alert(isPresented: $showReloadAlert) {

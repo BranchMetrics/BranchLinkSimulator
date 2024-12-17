@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4218D9B72D10BA11001EE148 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 4218D9B62D10BA11001EE148 /* BranchSDK */; };
 		422D52352CED496A0027F9D7 /* ApiConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422D52342CED496A0027F9D7 /* ApiConfiguration.swift */; };
 		422D52372CED50230027F9D7 /* ApiSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422D52362CED50230027F9D7 /* ApiSettingsView.swift */; };
 		422D523D2CEFBAD60027F9D7 /* RoundTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422D523C2CEFBAD60027F9D7 /* RoundTripView.swift */; };
 		428539352CF69D8A00084545 /* RoundTrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428539342CF69D8A00084545 /* RoundTrip.swift */; };
 		428539372CF69E2300084545 /* RoundTripStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428539362CF69E2300084545 /* RoundTripStore.swift */; };
+		C10E03962D11EE6C00ECD382 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = C10E03952D11EE6C00ECD382 /* BranchSDK */; };
 		C16B978F2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B978E2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift */; };
 		C16B97912B759F9D00FB0631 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B97902B759F9D00FB0631 /* HomeView.swift */; };
 		C16B97932B759F9E00FB0631 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C16B97922B759F9E00FB0631 /* Assets.xcassets */; };
@@ -46,7 +46,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C16B97B22B87BD8300FB0631 /* AdSupport.framework in Frameworks */,
-				4218D9B72D10BA11001EE148 /* BranchSDK in Frameworks */,
+				C10E03962D11EE6C00ECD382 /* BranchSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,7 +123,7 @@
 			);
 			name = BranchLinkSimulator;
 			packageProductDependencies = (
-				4218D9B62D10BA11001EE148 /* BranchSDK */,
+				C10E03952D11EE6C00ECD382 /* BranchSDK */,
 			);
 			productName = BranchLinkSimulator;
 			productReference = C16B978B2B759F9D00FB0631 /* BranchLinkSimulator.app */;
@@ -154,7 +154,7 @@
 			);
 			mainGroup = C16B97822B759F9D00FB0631;
 			packageReferences = (
-				4218D9B52D10BA11001EE148 /* XCRemoteSwiftPackageReference "ios-branch-deep-linking-attribution" */,
+				C10E03942D11EE6C00ECD382 /* XCRemoteSwiftPackageReference "ios-branch-deep-linking-attribution" */,
 			);
 			productRefGroup = C16B978C2B759F9D00FB0631 /* Products */;
 			projectDirPath = "";
@@ -341,7 +341,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1;
+				MARKETING_VERSION = 2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -378,7 +378,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1;
+				MARKETING_VERSION = 2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -414,7 +414,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4218D9B52D10BA11001EE148 /* XCRemoteSwiftPackageReference "ios-branch-deep-linking-attribution" */ = {
+		C10E03942D11EE6C00ECD382 /* XCRemoteSwiftPackageReference "ios-branch-deep-linking-attribution" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/BranchMetrics/ios-branch-deep-linking-attribution";
 			requirement = {
@@ -425,9 +425,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4218D9B62D10BA11001EE148 /* BranchSDK */ = {
+		C10E03952D11EE6C00ECD382 /* BranchSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4218D9B52D10BA11001EE148 /* XCRemoteSwiftPackageReference "ios-branch-deep-linking-attribution" */;
+			package = C10E03942D11EE6C00ECD382 /* XCRemoteSwiftPackageReference "ios-branch-deep-linking-attribution" */;
 			productName = BranchSDK;
 		};
 /* End XCSwiftPackageProductDependency section */
