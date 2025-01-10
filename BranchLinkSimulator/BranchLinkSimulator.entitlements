@@ -4,18 +4,31 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:freedom-external-services.branchbeta.link</string>
-		<string>applinks:freedom-external-services-alternate.branchbeta.link</string>
-		<string>applinks:freedom-external-services.test.branchbeta.link</string>
-		<string>applinks:ac-sandbox.branchbeta.link</string>
-		<string>ac-sandbox-alternate.branchbeta.link</string>
-		<string>ac-sandbox.test.branchbeta.link</string>
-		<string>applinks:freedom-prod.test.app.link</string>
-		<string>applinks:freedom-prod-alternate.app.link</string>
-		<string>applinks:freedom-prod.app.link</string>
-		<string>applinks:branchlinksimulator.app.link</string>
-		<string>applinks:branchlinksimulator-alternate.app.link</string>
-		<string>applinks:branchlinksimulator.test.app.link</string>
+		<string>applinks:stage-freedom.branchbeta.link</string>
+		<string>stage-freedom.branchbeta.link</string>
+		<string>applinks:stage-freedom-alternate.branchbeta.link</string>
+		<string>stage-freedom-alternate.branchbeta.link</string>
+		<string>applinks:stage-freedom.test.branchbeta.link</string>
+		<string>stage-freedom.test.branchbeta.link</string>
+		<string>applinks:stage-ac-sandbox.branchbeta.link</string>
+		<string>stage-ac-sandbox.test.branchbeta.link</string>
+		<string>applinks:stage-ac-sandbox-alternate.branchbeta.link</string>
+		<string>stage-ac-sandbox-alternate.branchbeta.link</string>
+		<string>applinks:stage-ac-sandbox.test.branchbeta.link</string>
+		<string>stage-ac-sandbox.test.branchbeta.link</string>
+		<string>applinks:prod-freedom.app.link</string>
+		<string>prod-freedom.app.link</string>
+		<string>applinks:prod-freedom.test.app.link</string>
+		<string>prod-freedom.test.app.link</string>
+		<string>applinks:prod-freedom-prod-alternate.app.link</string>
+		<string>prod-freedom-prod-alternate.app.link</string>
+		<string>applinks:prod-freedom.app.link</string>
+		<string>applinks:prod-ac-sandbox.app.link</string>
+		<string>prod-ac-sandbox.app.link</string>
+		<string>applinks:prod-ac-sandbox-alternate.app.link</string>
+		<string>prod-ac-sandbox-alternate.app.link</string>
+		<string>applinks:prod-ac-sandbox-alternate.app.link</string>
+		<string>prod-ac-sandbox.test.app.link</string>
 		<string>applinks:allergics.org</string>
 	</array>
 </dict>
