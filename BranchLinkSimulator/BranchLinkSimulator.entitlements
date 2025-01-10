@@ -30,6 +30,8 @@
 		<string>applinks:prod-ac-sandbox-alternate.app.link</string>
 		<string>prod-ac-sandbox.test.app.link</string>
 		<string>applinks:allergics.org</string>
+		<string>linksimulator.branchcustom.xyz</string>
+		<string>applinks:linksimulator.branchcustom.xyz</string>
 	</array>
 </dict>
 </plist>
