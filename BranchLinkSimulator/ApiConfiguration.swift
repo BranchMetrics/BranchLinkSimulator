@@ -16,13 +16,22 @@ struct ApiConfiguration: Identifiable, Codable, Equatable {
     var staging: Bool
 }
 
-let STAGING = "Staging"
-let PRODUCTION = "Production"
-let STAGING_AC = "Staging AC"
-let PRODUCTION_AC = "Production AC"
+let STAGING = "[Stage] External Services"
+let PRODUCTION = "Pro Production"
+let STAGING_AC = "[Stage] Adv. Compliance Sandbox"
+let PRODUCTION_AC = "Adv. Compliance Sandbox"
+let STAGING_LS = "[Stage] LS + ENGMT Ess. Demo"
+let PRODUCTION_LS = "LS + ENGMT Ess. Demo"
 
 
 var apiConfigurationsMap: [String: ApiConfiguration] = [
+    STAGING_LS: ApiConfiguration(
+        name: STAGING_LS,
+        branchKey: "key_live_nFc30jPoTV53LhvHat5XXffntufA4O0l",
+        apiUrl: "https://api.stage.branch.io",
+        appId: "1425582272655938028",
+        staging: true
+    ),
     STAGING_AC: ApiConfiguration(
         name: STAGING_AC,
         branchKey: "key_live_juoZrlpzQZvBQbwR33GO5hicszlTGnVT",
@@ -37,6 +46,13 @@ var apiConfigurationsMap: [String: ApiConfiguration] = [
         appId: "436637608899006753",
         staging: true
     ),
+    PRODUCTION_LS: ApiConfiguration(
+        name: PRODUCTION_LS,
+        branchKey: "key_live_hsdXYiNiH9pfDv50xrFt0gbgEEiMIqFO",
+        apiUrl: "https://api3.branch.io",
+        appId: "1425583205569811094",
+        staging: false
+    ),
     PRODUCTION_AC: ApiConfiguration(
         name: PRODUCTION_AC,
         branchKey: "key_live_hshD4wiPK2sSxfkZqkH30ggmyBfmGmD7",
@@ -46,9 +62,9 @@ var apiConfigurationsMap: [String: ApiConfiguration] = [
     ),
     PRODUCTION: ApiConfiguration(
         name: PRODUCTION,
-        branchKey: "key_live_iDiV7ZewvDm9GIYxUnwdFdmmvrc9m3Aw",
+        branchKey: "key_live_iCh53eMdH5aIibeOqRYBojgpyrmU4gd8",
         apiUrl: "https://api3.branch.io",
-        appId: "1364964166783226677",
+        appId: "1425585005551178435",
         staging: false
     )
 ]

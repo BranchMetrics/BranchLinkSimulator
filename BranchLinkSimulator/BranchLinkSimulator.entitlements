@@ -4,6 +4,18 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
+		<string>applinks:r3dfg-alternate.app.link</string>
+		<string>r3dfg-alternate.app.link</string>
+		<string>applinks:skhsg-alternate.branchbeta.link</string>
+		<string>skhsg-alternate.branchbeta.link</string>
+		<string>applinks:hoplink.branchcustom.xyz</string>
+		<string>hoplink.branchcustom.xyz</string>
+		<string>applinks:r3dfg.app.link</string>
+		<string>r3dfg.app.link</string>
+		<string>applinks:hop.link</string>
+		<string>hop.link</string>
+		<string>skhsg.branchbeta.link</string>
+		<string>applinks:skhsg.branchbeta.link</string>
 		<string>applinks:stage-freedom.branchbeta.link</string>
 		<string>stage-freedom.branchbeta.link</string>
 		<string>applinks:stage-freedom-alternate.branchbeta.link</string>
@@ -20,18 +32,14 @@
 		<string>prod-freedom.app.link</string>
 		<string>applinks:prod-freedom.test.app.link</string>
 		<string>prod-freedom.test.app.link</string>
-		<string>applinks:prod-freedom-prod-alternate.app.link</string>
-		<string>prod-freedom-prod-alternate.app.link</string>
-		<string>applinks:prod-freedom.app.link</string>
+		<string>applinks:prod-freedom-alternate.app.link</string>
+		<string>prod-freedom-alternate.app.link</string>
 		<string>applinks:prod-ac-sandbox.app.link</string>
 		<string>prod-ac-sandbox.app.link</string>
 		<string>applinks:prod-ac-sandbox-alternate.app.link</string>
 		<string>prod-ac-sandbox-alternate.app.link</string>
 		<string>applinks:prod-ac-sandbox-alternate.app.link</string>
 		<string>prod-ac-sandbox.test.app.link</string>
-		<string>applinks:allergics.org</string>
-		<string>linksimulator.branchcustom.xyz</string>
-		<string>applinks:linksimulator.branchcustom.xyz</string>
 	</array>
 </dict>
 </plist>
