@@ -20,6 +20,7 @@
 		C16B97A02B75A0FA00FB0631 /* DeeplinkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B979F2B75A0FA00FB0631 /* DeeplinkDetailView.swift */; };
 		C16B97A22B75A18A00FB0631 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B97A12B75A18A00FB0631 /* AppDelegate.swift */; };
 		C16B97B22B87BD8300FB0631 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C16B97B02B87BD8000FB0631 /* AdSupport.framework */; };
+		E7EA36B22DD63A350094FCC9 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7EA36B12DD63A350094FCC9 /* SafariServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		C16B97A52B75A4F800FB0631 /* BranchLinkSimulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BranchLinkSimulator.entitlements; sourceTree = "<group>"; };
 		C16B97A62B75A5F700FB0631 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C16B97B02B87BD8000FB0631 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		E7EA36B12DD63A350094FCC9 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7EA36B22DD63A350094FCC9 /* SafariServices.framework in Frameworks */,
 				C16B97B22B87BD8300FB0631 /* AdSupport.framework in Frameworks */,
 				C10E03962D11EE6C00ECD382 /* BranchSDK in Frameworks */,
 			);
@@ -101,6 +104,7 @@
 		C16B97AF2B87BD8000FB0631 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E7EA36B12DD63A350094FCC9 /* SafariServices.framework */,
 				C16B97B02B87BD8000FB0631 /* AdSupport.framework */,
 			);
 			name = Frameworks;
@@ -341,7 +345,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4;
+				MARKETING_VERSION = 2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -378,7 +382,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4;
+				MARKETING_VERSION = 2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
