@@ -6,11 +6,15 @@ let SELECTED_CONFIG_NAME = "selectedConfigName"
 struct ApiSettingsView: View {
     @State private var selectedConfig: ApiConfiguration
     @State private var showReloadAlert = false
+    @State private var newApiUrl: String
     private var store: RoundTripStore
+    
+    private var customApiKey = "custom_api_url_override"
 
     init(store: RoundTripStore) {
-        selectedConfig = loadConfigOrDefault()
+        _selectedConfig = State(initialValue: loadConfigOrDefault())
         self.store = store
+        _newApiUrl = State(initialValue: _selectedConfig.wrappedValue.apiUrl)
     }
     
     var body: some View {
@@ -48,6 +52,26 @@ struct ApiSettingsView: View {
             }
         }
         
+        VStack(alignment: .leading) {
+            Text("Update Current API URL")
+                .font(.headline)
+            HStack {
+                TextField("Enter new API URL", text: $newApiUrl)
+                    .textFieldStyle(.roundedBorder)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                
+                Button("Apply") {
+                    applyCustomApiUrl()
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            Text("This will override the API URL for the current configuration.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding(.vertical)
+
         NavigationLink(destination: RoundTripView(store: store)) {
             Label("API Request Log", systemImage: "doc.text.below.ecg.fill")
         }
@@ -58,8 +82,14 @@ struct ApiSettingsView: View {
         if selectedConfig != config {
             selectedConfig = config
             saveConfig(configName: getConfigName(selectedConfig))
+            UserDefaults.standard.removeObject(forKey: customApiKey)
             showReloadAlert = true
         }
+    }
+    
+    private func applyCustomApiUrl() {
+        UserDefaults.standard.set(newApiUrl, forKey: customApiKey)
+        showReloadAlert = true
     }
     
     func getConfigName(_ config: ApiConfiguration) -> String {
@@ -77,7 +107,12 @@ struct ApiSettingsView: View {
 }
 
 func loadConfigOrDefault() -> ApiConfiguration {
-    loadConfig() ?? apiConfigurationsMap[PRODUCTION] ?? ApiConfiguration(name: "N/A", branchKey: "N/A", apiUrl: "N/A", appId: "N/A", staging: false)
+    var baseConfig = loadConfig() ?? apiConfigurationsMap[PRODUCTION] ?? ApiConfiguration(name: "N/A", branchKey: "N/A", apiUrl: "N/A", appId: "N/A", staging: false)
+    
+    if let customUrl = UserDefaults.standard.string(forKey: "custom_api_url_override") {
+        baseConfig.apiUrl = customUrl
+    }
+    return baseConfig
 }
 
 func loadConfig() -> ApiConfiguration? {
