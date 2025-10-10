@@ -11,7 +11,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>io.branch.link-simulator</key>
-		<string>Branch Link Simulator </string>
+		<string>Branch Link Simulator - Distribution </string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>Apple Development</string>
