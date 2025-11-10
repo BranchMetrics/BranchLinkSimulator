@@ -35,5 +35,7 @@
 		<string>hoplink.branchcustom.xyz</string>
 		<string>hop.link</string>
 	</array>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This app uses tracking to provide better attribution and personalized experiences. Your data helps us improve our services.</string>
 </dict>
 </plist>

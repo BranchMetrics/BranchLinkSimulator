@@ -28,13 +28,31 @@ struct HomeView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
+            ZStack {
                 if deepLinkViewModel.deepLinkHandled, let deepLinkData = deepLinkViewModel.deepLinkData {
-                    NavigationLink(destination: DeeplinkDetailView(pageTitle: deepLinkData["page"] as? String ?? "Data", deepLinkParameters: deepLinkData), isActive: $deepLinkViewModel.deepLinkHandled) {
+                    NavigationLink(
+                        destination: DeeplinkDetailView(
+                            pageTitle: deepLinkData["page"] as? String ?? "Data",
+                            deepLinkParameters: deepLinkData
+                        )
+                    ) {
                         EmptyView()
                     }
-                } else {
+                    .opacity(0)
+                    .simultaneousGesture(TapGesture().onEnded {
+                        // Trigger navigation
+                    })
+                }
+
+                if !deepLinkViewModel.deepLinkHandled {
                     List {
+                        Section(header: Text("Testing & Diagnostics")) {
+                            NavigationLink(destination: ATTTestView()) {
+                                Label("ATT Testing", systemImage: "shield.checkered")
+                            }
+                        }
+                        .headerProminence(.standard)
+
                         Section(header: Text("Deep Link Pages")) {
                             NavigationLink(destination: DeeplinkDetailView(pageTitle: "Tree", deepLinkParameters: [:])) {
                                 Label("Go to Tree", systemImage: "tree.fill")
