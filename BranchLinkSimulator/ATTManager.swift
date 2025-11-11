@@ -21,7 +21,17 @@ class ATTManager: ObservableObject {
 
     // MARK: - Initialization
     init() {
-        updateCurrentStatus()
+        // Initialize synchronously to avoid race conditions with SwiftUI view rendering
+        // This ensures the view has valid data immediately upon first render
+        if #available(iOS 14, *) {
+            authorizationStatus = ATTrackingManager.trackingAuthorizationStatus
+        } else {
+            authorizationStatus = .authorized
+        }
+        updateIDFA()
+
+        // Add initial history entry
+        addStatusEntry(status: authorizationStatus, event: "App Initialized")
     }
 
     // MARK: - Public Methods

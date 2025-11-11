@@ -12,6 +12,7 @@ struct ATTTestView: View {
     @StateObject private var attManager = ATTManager()
     @State private var showingRequestAlert = false
     @State private var showingStatusHistory = false
+    @State private var showingCopyConfirmation = false
 
     var body: some View {
         List {
@@ -25,11 +26,13 @@ struct ATTTestView: View {
                     Spacer()
                     HStack(spacing: 4) {
                         Text(attManager.statusToEmoji(attManager.authorizationStatus))
-                            .accessibilityIdentifier(attManager.statusToEmoji(attManager.authorizationStatus))
+                            .accessibilityIdentifier("statusEmoji")
                         Text(attManager.statusToString(attManager.authorizationStatus))
                             .foregroundColor(statusColor)
-                            .accessibilityIdentifier(attManager.statusToString(attManager.authorizationStatus))
+                            .accessibilityIdentifier("statusValue")
                     }
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier("statusDisplay")
                 }
                 .padding(.vertical, 4)
 
@@ -41,11 +44,18 @@ struct ATTTestView: View {
                     Text(attManager.idfa)
                         .font(.system(.caption, design: .monospaced))
                         .foregroundColor(.secondary)
+                        .accessibilityIdentifier("idfaValue")
                 }
                 .padding(.vertical, 4)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    UIPasteboard.general.string = attManager.idfa
+                    showingCopyConfirmation = true
+                }
                 .contextMenu {
                     Button(action: {
                         UIPasteboard.general.string = attManager.idfa
+                        showingCopyConfirmation = true
                     }) {
                         Label("Copy IDFA", systemImage: "doc.on.doc")
                     }
@@ -55,11 +65,14 @@ struct ATTTestView: View {
                     HStack {
                         Text("Last Request")
                             .font(.headline)
+                            .accessibilityIdentifier("lastRequestLabel")
                         Spacer()
                         Text(lastRequest, style: .relative)
                             .foregroundColor(.secondary)
+                            .accessibilityIdentifier("lastRequestValue")
                     }
                     .padding(.vertical, 4)
+                    .accessibilityIdentifier("lastRequestRow")
                 }
 
                 HStack {
@@ -256,6 +269,30 @@ struct ATTTestView: View {
         .onAppear {
             attManager.updateCurrentStatus()
         }
+        .overlay(
+            Group {
+                if showingCopyConfirmation {
+                    VStack {
+                        Spacer()
+                        Text("IDFA Copied!")
+                            .padding()
+                            .background(Color.black.opacity(0.8))
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                            .accessibilityIdentifier("copyConfirmation")
+                        Spacer()
+                    }
+                    .transition(.opacity)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            withAnimation {
+                                showingCopyConfirmation = false
+                            }
+                        }
+                    }
+                }
+            }
+        )
         .alert("Request ATT Permission?", isPresented: $showingRequestAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Request") {
