@@ -31,6 +31,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         window.makeKeyAndVisible()
 
+        // Log launch type detection
+        let hasURLContexts = !connectionOptions.urlContexts.isEmpty
+        let hasUserActivities = !connectionOptions.userActivities.isEmpty
+        let launchType = hasURLContexts ? "URL Scheme" : (hasUserActivities ? "Universal Link" : "Normal")
+
+        appDelegate.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        appDelegate.store.addLogEntry("[APP] COLD LAUNCH detected")
+        appDelegate.store.addLogEntry("[APP] Launch type: \(launchType)")
+
+        if let url = connectionOptions.urlContexts.first?.url {
+            appDelegate.store.addLogEntry("[APP] URL: \(url.absoluteString)")
+        }
+        if let activity = connectionOptions.userActivities.first, let url = activity.webpageURL {
+            appDelegate.store.addLogEntry("[APP] Universal Link: \(url.absoluteString)")
+        }
+
         // Check if using new API (double-open fix)
         let useNewAPI = UserDefaults.standard.bool(forKey: "useDoubleOpenFix")
 
@@ -38,7 +54,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             // NEW API: Uses BranchScene with connection options
             // This prevents double OPEN on cold launch via deep links
             print("[BLS] Using NEW API: initSessionWithSceneConnectionOptions")
-            appDelegate.store.addLogEntry("[INIT] Using NEW API (double-open fix)")
+            appDelegate.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            appDelegate.store.addLogEntry("[INIT] 🟢 Using NEW API (FIX)")
+            appDelegate.store.addLogEntry("[INIT] BranchScene.initSession(with:)")
+            appDelegate.store.addLogEntry("[INIT] Expected: 1 OPEN request")
+            appDelegate.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
             BranchScene.shared().initSession(with: connectionOptions) { params, error, _ in
                 self.handleBranchCallback(params: params as? [String: AnyObject], error: error)
@@ -46,7 +66,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         } else {
             // OLD API: Standard initSession - may cause double OPEN
             print("[BLS] Using OLD API: initSession(launchOptions:)")
-            appDelegate.store.addLogEntry("[INIT] Using OLD API (may double-open)")
+            appDelegate.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            appDelegate.store.addLogEntry("[INIT] 🔴 Using OLD API (BUG)")
+            appDelegate.store.addLogEntry("[INIT] Branch.initSession(launchOptions:)")
+            appDelegate.store.addLogEntry("[INIT] Expected: 2 OPEN requests on deep link")
+            appDelegate.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
             // Note: launchOptions is nil in scene-based apps
             Branch.getInstance().initSession(launchOptions: nil) { params, error in
@@ -56,11 +80,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Handle URLs that were passed at launch
         if !connectionOptions.urlContexts.isEmpty {
+            appDelegate.store.addLogEntry("[URL] Processing URL from connectionOptions")
             self.scene(scene, openURLContexts: connectionOptions.urlContexts)
         }
 
         // Handle Universal Links that were passed at launch
         if let userActivity = connectionOptions.userActivities.first {
+            appDelegate.store.addLogEntry("[UL] Processing Universal Link from connectionOptions")
             self.scene(scene, continue: userActivity)
         }
     }
@@ -68,14 +94,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let url = URLContexts.first?.url else { return }
         print("[BLS] scene:openURLContexts - \(url)")
-        appDelegate?.store.addLogEntry("[URL] openURLContexts: \(url.absoluteString)")
+        appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        appDelegate?.store.addLogEntry("[URL] WARM LAUNCH via URL Scheme")
+        appDelegate?.store.addLogEntry("[URL] \(url.absoluteString)")
+        appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
         BranchScene.shared().scene(scene, openURLContexts: URLContexts)
     }
 
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
         print("[BLS] scene:continueUserActivity")
-        appDelegate?.store.addLogEntry("[UL] continueUserActivity")
+        appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        appDelegate?.store.addLogEntry("[UL] WARM LAUNCH via Universal Link")
+        if let url = userActivity.webpageURL {
+            appDelegate?.store.addLogEntry("[UL] \(url.absoluteString)")
+        }
+        appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
         BranchScene.shared().scene(scene, continue: userActivity)
     }
@@ -83,7 +117,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func handleBranchCallback(params: [String: AnyObject]?, error: Error?) {
         guard let appDelegate = appDelegate else { return }
 
+        appDelegate.store.addLogEntry("[CALLBACK] Branch session callback received")
+
         if let error = error {
+            appDelegate.store.addLogEntry("[CALLBACK] ❌ Error: \(error.localizedDescription)")
             let config = loadConfigOrDefault()
             var message = "Failed to initialize Branch SDK: \(error.localizedDescription)."
             if config.staging {
@@ -96,13 +133,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         if let params = params {
             if let clickedBranchLink = params["+clicked_branch_link"] as? NSNumber, clickedBranchLink.boolValue == true {
+                appDelegate.store.addLogEntry("[CALLBACK] ✅ Branch link clicked!")
+                if let feature = params["~feature"] as? String {
+                    appDelegate.store.addLogEntry("[CALLBACK] Feature: \(feature)")
+                }
+                if let campaign = params["~campaign"] as? String {
+                    appDelegate.store.addLogEntry("[CALLBACK] Campaign: \(campaign)")
+                }
                 DispatchQueue.main.async {
                     appDelegate.deepLinkViewModel.deepLinkData = params
                     appDelegate.deepLinkViewModel.deepLinkHandled = true
                 }
             } else {
-                print("[BLS] Didn't click Branch link")
+                appDelegate.store.addLogEntry("[CALLBACK] No Branch link clicked (normal launch)")
             }
+        } else {
+            appDelegate.store.addLogEntry("[CALLBACK] No params received")
         }
     }
 }
