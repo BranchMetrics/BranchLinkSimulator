@@ -5,8 +5,8 @@
 //  Created by Brice Redmond on 11/20/24.
 //
 
-import Foundation
 import BranchSDK
+import Foundation
 
 struct RoundTrip: Identifiable, Codable {
     let id: UUID
@@ -14,13 +14,15 @@ struct RoundTrip: Identifiable, Codable {
     let url: String
     let request: BranchRequest
     var response: BranchResponse?
+    var isOpenRequest: Bool
 
-    init(id: UUID = UUID(), timestamp: Date, url: String, request: BranchRequest, response: BranchResponse? = nil) {
+    init(id: UUID = UUID(), timestamp: Date, url: String, request: BranchRequest, response: BranchResponse? = nil, isOpenRequest: Bool = false) {
         self.id = id
         self.timestamp = timestamp
         self.url = url
         self.request = request
         self.response = response
+        self.isOpenRequest = isOpenRequest
     }
 }
 
@@ -33,5 +35,3 @@ struct BranchResponse: Codable {
     var statusCode: String
     var body: String
 }
-
-

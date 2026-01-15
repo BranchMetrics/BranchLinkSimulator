@@ -1,14 +1,14 @@
 //
-//  ContentView.swift
+//  HomeView.swift
 //  BranchLinkSimulator
 //
 //  Created by Nipun Singh on 2/8/24.
 //
 
-import SwiftUI
-import BranchSDK
-import AppTrackingTransparency
 import AdSupport
+import AppTrackingTransparency
+import BranchSDK
+import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var deepLinkViewModel: DeepLinkViewModel
@@ -22,10 +22,14 @@ struct HomeView: View {
 
     @State private var showingEventActionSheet = false
     @State private var selectedEventType: BranchStandardEvent = .purchase
-    
+
     @State private var showingQRSheet = false
     @State private var qrCodeImage: UIImage? = nil
-    
+
+    // Double-Open Fix Toggle
+    @AppStorage("useDoubleOpenFix") private var useDoubleOpenFix: Bool = false
+    @State private var showingLogs = false
+
     var body: some View {
         NavigationView {
             VStack {
@@ -47,7 +51,7 @@ struct HomeView: View {
                             }
                         }
                         .headerProminence(.standard)
-                        
+
                         Section(header: Text("Events")) {
                             Button(action: { self.showingEventActionSheet = true }) {
                                 Label("Send Standard Event", systemImage: "paperplane.fill")
@@ -66,7 +70,7 @@ struct HomeView: View {
                                     .default(Text("Search"), action: { sendEventOfType(.search) }),
                                     .default(Text("Share"), action: { sendEventOfType(.share) }),
 
-                                    .cancel()
+                                    .cancel(),
                                 ])
                             }
                             Button(action: sendCustomEvent) {
@@ -111,12 +115,57 @@ struct HomeView: View {
                         }
                         .headerProminence(.standard)
                         .listRowSeparator(.hidden)
-                    
-                        
+
                         Section("API Settings") {
                             ApiSettingsView(store: store)
                         }
-                        
+
+                        // MARK: - Double-Open Testing Section
+
+                        Section(header: Text("Double-Open Testing")) {
+                            Toggle(isOn: $useDoubleOpenFix) {
+                                VStack(alignment: .leading) {
+                                    Text("Use New API (Fix)")
+                                        .font(.headline)
+                                    Text(useDoubleOpenFix ? "BranchScene.initSession(with:)" : "Branch.initSession(launchOptions:)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            .onChange(of: useDoubleOpenFix) { _ in
+                                showToast(message: "Restart app to apply change")
+                            }
+
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("OPEN Requests")
+                                        .font(.headline)
+                                    Text("Count of /v1/open or /v2/event(open)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text("\(store.openRequestCount)")
+                                    .font(.title)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(store.openRequestCount > 1 ? .red : .green)
+                            }
+
+                            NavigationLink(destination: LogsView(store: store)) {
+                                Label("View Logs", systemImage: "doc.text.magnifyingglass")
+                            }
+
+                            Button(action: {
+                                store.clearLogs()
+                                store.clearRoundTrips()
+                                showToast(message: "Logs cleared")
+                            }) {
+                                Label("Clear All Logs", systemImage: "trash")
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        .headerProminence(.standard)
+
                         Section(header: Text("Event Settings"), footer: Text("Branch SDK v3.7.0").frame(maxWidth: .infinity)) {
                             VStack(alignment: .leading) {
                                 Text("Customer Event Alias")
@@ -125,7 +174,7 @@ struct HomeView: View {
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
                             }
                             .padding(.vertical, 8)
-                            
+
                             VStack(alignment: .leading) {
                                 Text("Branch Link Simulator Session ID")
                                     .font(.headline)
@@ -138,7 +187,6 @@ struct HomeView: View {
                                 saveSettings()
                             }
                             .foregroundColor(.blue)
-                            
                         }
                         .headerProminence(.standard)
                     }
@@ -155,19 +203,19 @@ struct HomeView: View {
             deepLinkViewModel.deepLinkHandled = false
         }
         .alert(item: $deepLinkViewModel.errorItem) { errorItem in
-                    Alert(
-                        title: Text("Error"),
-                        message: Text(errorItem.message),
-                        dismissButton: .default(Text("OK"))
-                    )
-                }
+            Alert(
+                title: Text("Error"),
+                message: Text(errorItem.message),
+                dismissButton: .default(Text("OK"))
+            )
+        }
     }
-    
+
     func sendEventOfType(_ eventType: BranchStandardEvent) {
         let event = BranchEvent.standardEvent(eventType)
         event.alias = eventAlias
         event.customData["bls_session_id"] = sessionID
-        event.logEvent { result, error in
+        event.logEvent { _, error in
             if error == nil {
                 self.showToast(message: "Sent \(eventType.rawValue) Event!")
             } else {
@@ -175,12 +223,12 @@ struct HomeView: View {
             }
         }
     }
-    
+
     func sendCustomEvent() {
-        let event = BranchEvent.customEvent(withName:"testedCustomEvent")
+        let event = BranchEvent.customEvent(withName: "testedCustomEvent")
         event.alias = eventAlias
         event.customData["bls_session_id"] = sessionID
-        event.logEvent { result, error in
+        event.logEvent { _, error in
             if error == nil {
                 self.showToast(message: "Sent Custom Event!")
             } else {
@@ -188,32 +236,32 @@ struct HomeView: View {
             }
         }
     }
-    
+
     func saveSettings() {
         print("Setting API URL to  \(branchAPIURL)")
         Branch.setAPIUrl(branchAPIURL)
-                
+
         UserDefaults.standard.set(eventAlias, forKey: "customerEventAlias")
         UserDefaults.standard.set(sessionID, forKey: "blsSessionId")
-        
+
         Branch.getInstance().setRequestMetadataKey("bls_session_id", value: sessionID)
-        
-        self.showToast(message: "Saved Settings!")
-     }
-    
+
+        showToast(message: "Saved Settings!")
+    }
+
     func showToast(message: String) {
-        self.toastMessage = message
-        self.showingToast = true
+        toastMessage = message
+        showingToast = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.showingToast = false
         }
     }
-    
+
     func requestIDFAPermission() {
         if #available(iOS 14, *) {
             DispatchQueue.main.async {
-                ATTrackingManager.requestTrackingAuthorization { (status) in
-                    if (status == .authorized) {
+                ATTrackingManager.requestTrackingAuthorization { status in
+                    if status == .authorized {
                         let idfa = ASIdentifierManager.shared().advertisingIdentifier
                         print("IDFA: " + idfa.uuidString)
                     } else {
@@ -223,10 +271,10 @@ struct HomeView: View {
             }
         }
     }
-    
+
     func createURL() {
-        let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "item/12345")
-        let lp: BranchLinkProperties = BranchLinkProperties()
+        let buo = BranchUniversalObject(canonicalIdentifier: "item/12345")
+        let lp = BranchLinkProperties()
 
         buo.getShortUrl(with: lp) { url, error in
             if let error = error {
@@ -236,10 +284,10 @@ struct HomeView: View {
             }
         }
     }
-    
+
     func createQRCode() {
-        let buo: BranchUniversalObject = BranchUniversalObject(canonicalIdentifier: "item/12345")
-        let lp: BranchLinkProperties = BranchLinkProperties()
+        let buo = BranchUniversalObject(canonicalIdentifier: "item/12345")
+        let lp = BranchLinkProperties()
 
         let qrCode = BranchQRCode()
         qrCode.getAsImage(buo, linkProperties: lp) { image, error in
@@ -253,14 +301,13 @@ struct HomeView: View {
             }
         }
     }
-
 }
 
 extension View {
     func toast(isShowing: Binding<Bool>, message: String) -> some View {
         ZStack(alignment: .bottom) {
             self
-            
+
             if isShowing.wrappedValue {
                 VStack {
                     Spacer()
@@ -285,7 +332,6 @@ extension View {
         .animation(.easeInOut, value: isShowing.wrappedValue)
     }
 }
-
 
 #Preview {
     HomeView()

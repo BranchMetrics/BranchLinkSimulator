@@ -5,8 +5,8 @@
 //  Created by Nipun Singh on 2/8/24.
 //
 
-import SwiftUI
 import BranchSDK
+import SwiftUI
 
 struct AlertItem: Identifiable {
     var id: String { message }
@@ -22,14 +22,14 @@ class DeepLinkViewModel: ObservableObject {
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var deepLinkViewModel = DeepLinkViewModel()
     var store = RoundTripStore()
-    
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        
+
+    func application(_: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Configure Branch SDK (but don't initialize - SceneDelegate will do that)
         let config = loadConfigOrDefault()
         Branch.setAPIUrl(config.apiUrl)
         Branch.setBranchKey(config.branchKey)
-        
-        Branch.enableLogging(at: .verbose) { msg, logLevel, err, request, response in
+
+        Branch.enableLogging(at: .verbose) { _, _, _, request, response in
             self.store.processLog(request, response)
         }
 
@@ -38,37 +38,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let savedId = UserDefaults.standard.string(forKey: "blsSessionId") {
             blsSessionId = savedId
         } else {
-            // Generate a new UUID if one does not exist
             blsSessionId = UUID().uuidString
             UserDefaults.standard.set(blsSessionId, forKey: "blsSessionId")
         }
-        
-        // Set the bls_session_id in Branch request metadata
+
         Branch.getInstance().setRequestMetadataKey("bls_session_id", value: blsSessionId)
 
-        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-            print(params as? [String: AnyObject] ?? {})
-            if let error = error {
-                var message = "Failed to initialize Branch SDK: \(error.localizedDescription)."
-                if config.staging {
-                  message += " Are you connected to VPN?"
-                }
-                self.deepLinkViewModel.errorItem = AlertItem(message: message)
-            }
-            if let params = params as? [String: AnyObject] {
-                if let clickedBranchLink = params["+clicked_branch_link"] as? NSNumber, clickedBranchLink.boolValue == true {
-                    DispatchQueue.main.async {
-                        self.deepLinkViewModel.deepLinkData = params
-                        self.deepLinkViewModel.deepLinkHandled = true
-                    }
-                } else {
-                    print("Didn't click Branch link")
-                }
+        // Log launch info
+        let useNewAPI = UserDefaults.standard.bool(forKey: "useDoubleOpenFix")
+        store.addLogEntry("[APP] didFinishLaunching - API mode: \(useNewAPI ? "NEW (fix)" : "OLD")")
 
-            }
+        if let url = launchOptions?[.url] as? URL {
+            store.addLogEntry("[APP] Launch URL: \(url.absoluteString)")
         }
-        
+
+        // NOTE: Branch initialization moved to SceneDelegate
+        // This allows testing both OLD and NEW APIs
+
         return true
     }
-    
+
+    // MARK: UISceneSession Lifecycle
+
+    func application(_: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options _: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    }
 }
