@@ -79,15 +79,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
 
         // Handle URLs that were passed at launch
-        if !connectionOptions.urlContexts.isEmpty {
-            appDelegate.store.addLogEntry("[URL] Processing URL from connectionOptions")
-            self.scene(scene, openURLContexts: connectionOptions.urlContexts)
-        }
+        // With OLD API: This will cause DOUBLE OPEN (the bug we want to demonstrate)
+        // With NEW API: BranchScene.initSession already handled the URL, skip this
+        if !useNewAPI {
+            if !connectionOptions.urlContexts.isEmpty {
+                appDelegate.store.addLogEntry("[URL] Processing URL from connectionOptions (OLD API)")
+                appDelegate.store.addLogEntry("[URL] ⚠️ This will trigger SECOND OPEN request!")
+                self.scene(scene, openURLContexts: connectionOptions.urlContexts)
+            }
 
-        // Handle Universal Links that were passed at launch
-        if let userActivity = connectionOptions.userActivities.first {
-            appDelegate.store.addLogEntry("[UL] Processing Universal Link from connectionOptions")
-            self.scene(scene, continue: userActivity)
+            // Handle Universal Links that were passed at launch
+            if let userActivity = connectionOptions.userActivities.first {
+                appDelegate.store.addLogEntry("[UL] Processing Universal Link from connectionOptions (OLD API)")
+                appDelegate.store.addLogEntry("[UL] ⚠️ This will trigger SECOND OPEN request!")
+                self.scene(scene, continue: userActivity)
+            }
+        } else {
+            // NEW API already handled URLs in initSession, just log
+            if !connectionOptions.urlContexts.isEmpty {
+                appDelegate.store.addLogEntry("[URL] ✅ URL already handled by BranchScene.initSession")
+            }
+            if connectionOptions.userActivities.first != nil {
+                appDelegate.store.addLogEntry("[UL] ✅ Universal Link already handled by BranchScene.initSession")
+            }
         }
     }
 
@@ -97,9 +111,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         appDelegate?.store.addLogEntry("[URL] WARM LAUNCH via URL Scheme")
         appDelegate?.store.addLogEntry("[URL] \(url.absoluteString)")
-        appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
-        BranchScene.shared().scene(scene, openURLContexts: URLContexts)
+        let useNewAPI = UserDefaults.standard.bool(forKey: "useDoubleOpenFix")
+
+        if useNewAPI {
+            // NEW API: BranchScene handles deduplication
+            appDelegate?.store.addLogEntry("[URL] 🟢 Using BranchScene (with dedup)")
+            appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            BranchScene.shared().scene(scene, openURLContexts: URLContexts)
+        } else {
+            // OLD API: Direct handleDeepLink - will cause double OPEN on cold launch
+            appDelegate?.store.addLogEntry("[URL] 🔴 Using Branch.handleDeepLink (no dedup)")
+            appDelegate?.store.addLogEntry("[URL] This WILL send another OPEN request!")
+            appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            Branch.getInstance().handleDeepLink(url)
+        }
     }
 
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
@@ -109,9 +135,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if let url = userActivity.webpageURL {
             appDelegate?.store.addLogEntry("[UL] \(url.absoluteString)")
         }
-        appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
-        BranchScene.shared().scene(scene, continue: userActivity)
+        let useNewAPI = UserDefaults.standard.bool(forKey: "useDoubleOpenFix")
+
+        if useNewAPI {
+            // NEW API: BranchScene handles deduplication
+            appDelegate?.store.addLogEntry("[UL] 🟢 Using BranchScene (with dedup)")
+            appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            BranchScene.shared().scene(scene, continue: userActivity)
+        } else {
+            // OLD API: Direct handleDeepLink - will cause double OPEN on cold launch
+            appDelegate?.store.addLogEntry("[UL] 🔴 Using Branch.handleDeepLink (no dedup)")
+            appDelegate?.store.addLogEntry("[UL] This WILL send another OPEN request!")
+            appDelegate?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            if let url = userActivity.webpageURL {
+                Branch.getInstance().handleDeepLink(url)
+            }
+        }
     }
 
     private func handleBranchCallback(params: [String: AnyObject]?, error: Error?) {
