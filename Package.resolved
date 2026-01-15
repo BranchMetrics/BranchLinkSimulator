@@ -1,0 +1,15 @@
+{
+  "originHash" : "1d87df2d33ed5742e8b7e6e8347dfb950ae2450c94675fc92f6ed7c63be073a0",
+  "pins" : [
+    {
+      "identity" : "ios-branch-deep-linking-attribution",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BranchMetrics/ios-branch-deep-linking-attribution",
+      "state" : {
+        "branch" : "fix/EMT-2816-double-open-issue",
+        "revision" : "28f83ce207ff1eb0f5ee9a4ae6ce2d80113cfa49"
+      }
+    }
+  ],
+  "version" : 3
+}
