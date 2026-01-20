@@ -80,14 +80,29 @@ class RoundTripStore: ObservableObject {
     // MARK: - OPEN Request Detection
 
     private func isOpenRequest(url: String, body: String) -> Bool {
+        let lowerUrl = url.lowercased()
+        let lowerBody = body.lowercased()
+
         // Check URL patterns for OPEN requests
-        if url.contains("/v1/open") || url.contains("/v2/event") {
-            // For v2/event, check if it's an "open" event
-            if url.contains("/v2/event") {
-                return body.contains("\"name\":\"open\"") || body.contains("\"name\": \"open\"")
-            }
+        if lowerUrl.contains("/v1/open") || lowerUrl.contains("v1/open") {
             return true
         }
+
+        // Check for v2/event with "open" event name
+        if lowerUrl.contains("/v2/event") {
+            return lowerBody.contains("\"name\":\"open\"") || lowerBody.contains("\"name\": \"open\"")
+        }
+
+        // Check body for BranchOpenRequest (from SDK log detection)
+        if lowerBody.contains("branchopenrequest") {
+            return true
+        }
+
+        // Check for api.branch.io with open in either url or body
+        if lowerUrl.contains("api.branch.io") && (lowerUrl.contains("open") || lowerBody.contains("open")) {
+            return true
+        }
+
         return false
     }
 
