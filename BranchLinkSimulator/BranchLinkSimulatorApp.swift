@@ -4,22 +4,22 @@
 //
 //  Created by Nipun Singh on 2/8/24.
 //
+//  IMPORTANT: This app uses UIKit SceneDelegate for proper Branch SDK integration.
+//  The SceneDelegate handles window creation and Branch initialization.
+//  We use UIApplicationMain instead of SwiftUI @main to ensure SceneDelegate is called.
 
-import BranchSDK
-import SwiftUI
+import UIKit
 
+// Use UIApplicationMain to ensure SceneDelegate is used for window/scene management
+// This is required for proper Branch SDK integration with connectionOptions
 @main
-struct BranchLinkSimulatorApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-
-    var body: some Scene {
-        // Note: SceneDelegate handles window creation and Branch initialization
-        // This WindowGroup is kept for compatibility but SceneDelegate takes precedence
-        // when UIApplicationSceneManifest is configured in Info.plist
-        WindowGroup {
-            HomeView()
-                .environmentObject(appDelegate.deepLinkViewModel)
-                .environmentObject(appDelegate.store)
-        }
+class AppMain {
+    static func main() {
+        UIApplicationMain(
+            CommandLine.argc,
+            CommandLine.unsafeArgv,
+            nil,
+            NSStringFromClass(AppDelegate.self)
+        )
     }
 }
