@@ -120,40 +120,90 @@ struct HomeView: View {
                             ApiSettingsView(store: store)
                         }
 
-                        // MARK: - Double-Open Testing Section
+                        // MARK: - Double-Open Bug Demo Section
 
-                        Section(header: Text("Double-Open Testing")) {
-                            Toggle(isOn: $useDoubleOpenFix) {
-                                VStack(alignment: .leading) {
-                                    Text("Use New API (Fix)")
-                                        .font(.headline)
-                                    Text(useDoubleOpenFix ? "BranchScene.initSession(with:)" : "Branch.initSession(launchOptions:)")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                        Section(header: Text("EMT-2816: Double-Open Test").accessibilityIdentifier("doubleOpenSectionHeader")) {
+                            // API Mode Toggle
+                            VStack(alignment: .leading, spacing: 8) {
+                                Toggle(isOn: $useDoubleOpenFix) {
+                                    VStack(alignment: .leading) {
+                                        Text("Use EMT-2816 Fix")
+                                            .font(.headline)
+                                        Text(useDoubleOpenFix ? "NEW API: BranchScene.initSession(with: connectionOptions)" : "OLD API: Branch.initSession(launchOptions: nil)")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                            .accessibilityIdentifier("apiModeDescription")
+                                    }
                                 }
-                            }
-                            .onChange(of: useDoubleOpenFix) { _ in
-                                showToast(message: "Restart app to apply change")
+                                .tint(.green)
+                                .accessibilityIdentifier("useDoubleOpenFixToggle")
+
+                                HStack {
+                                    Image(systemName: useDoubleOpenFix ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                                        .foregroundColor(useDoubleOpenFix ? .green : .orange)
+                                    Text(useDoubleOpenFix ? "Fix enabled - restart app to test" : "Bug mode - restart app to test")
+                                        .font(.caption)
+                                        .foregroundColor(useDoubleOpenFix ? .green : .orange)
+                                        .accessibilityIdentifier("fixStatusText")
+                                }
+                                .padding(.vertical, 4)
                             }
 
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text("OPEN Requests")
-                                        .font(.headline)
-                                    Text("Count of /v1/open or /v2/event(open)")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                            // OPEN Request Counter
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text("OPEN Requests")
+                                            .font(.headline)
+                                        Text("Count of /v1/open or /v2/event(open)")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
+                                    Text("\(store.openRequestCount)")
+                                        .font(.largeTitle)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(store.openRequestCount > 1 ? .red : .green)
+                                        .accessibilityIdentifier("openRequestCount")
                                 }
-                                Spacer()
-                                Text("\(store.openRequestCount)")
-                                    .font(.title)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(store.openRequestCount > 1 ? .red : .green)
+
+                                if store.openRequestCount > 1 {
+                                    HStack {
+                                        Image(systemName: "exclamationmark.triangle.fill")
+                                            .foregroundColor(.red)
+                                        Text("DOUBLE-OPEN BUG DETECTED!")
+                                            .font(.headline)
+                                            .foregroundColor(.red)
+                                    }
+                                    .padding(.vertical, 8)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.red.opacity(0.1))
+                                    .cornerRadius(8)
+                                } else if store.openRequestCount == 1 {
+                                    HStack {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .foregroundColor(.green)
+                                        Text("Single OPEN - Working correctly!")
+                                            .font(.headline)
+                                            .foregroundColor(.green)
+                                    }
+                                    .padding(.vertical, 8)
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.green.opacity(0.1))
+                                    .cornerRadius(8)
+                                }
+
+                                Text(useDoubleOpenFix
+                                    ? "Using NEW API with EMT-2816 fix. Deep link launches should send only 1 OPEN."
+                                    : "Using OLD/BUGGY API. Deep link launches will send 2 OPENs.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
                             }
 
                             NavigationLink(destination: LogsView(store: store)) {
                                 Label("View Logs", systemImage: "doc.text.magnifyingglass")
                             }
+                            .accessibilityIdentifier("viewLogsButton")
 
                             Button(action: {
                                 store.clearLogs()
@@ -163,10 +213,11 @@ struct HomeView: View {
                                 Label("Clear All Logs", systemImage: "trash")
                                     .foregroundColor(.red)
                             }
+                            .accessibilityIdentifier("clearLogsButton")
                         }
                         .headerProminence(.standard)
 
-                        Section(header: Text("Event Settings"), footer: Text("Branch SDK v3.7.0").frame(maxWidth: .infinity)) {
+                        Section(header: Text("Event Settings"), footer: Text("Branch SDK 3.9.1 (without deduplication)").frame(maxWidth: .infinity)) {
                             VStack(alignment: .leading) {
                                 Text("Customer Event Alias")
                                     .font(.headline)
