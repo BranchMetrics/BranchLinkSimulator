@@ -29,8 +29,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.setAPIUrl(config.apiUrl)
         Branch.setBranchKey(config.branchKey)
 
-        Branch.enableLogging(at: .verbose) { _, _, _, request, response in
-            self.store.processLog(request, response)
+        // Register URLProtocol interceptor BEFORE any Branch calls
+        // This intercepts ALL Branch network requests to count OPENs
+        BranchNetworkInterceptor.store = store
+        URLProtocol.registerClass(BranchNetworkInterceptor.self)
+        store.addLogEntry("[APP] URLProtocol interceptor registered")
+
+        // Enable verbose logging with basic callback (SDK 3.5.0 compatible)
+        // SDK 3.5.0 only has 3-param callback: (message, logLevel, error)
+        // Parse log messages to detect OPEN requests
+        Branch.enableLogging(at: .verbose) { [weak self] message, _, _ in
+            // Log all Branch messages for debugging
+            self?.store.addLogEntry("[SDK] \(message)")
+
+            // Detect OPEN requests from log messages
+            // SDK logs requests like: "<NSMutableURLRequest: 0x...> https://api.branch.io/v1/open"
+            // Also logs: "makeRequest [BranchOpenRequest]" or similar
+            let lowerMessage = message.lowercased()
+            let isOpenRequest = lowerMessage.contains("/v1/open") ||
+                lowerMessage.contains("v1/open") ||
+                lowerMessage.contains("branchopenrequest") ||
+                (lowerMessage.contains("api.branch.io") && lowerMessage.contains("open"))
+
+            if isOpenRequest {
+                self?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                self?.store.addLogEntry("🔴 OPEN REQUEST DETECTED from SDK log!")
+                self?.store.addLogEntry("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+                // Add round trip for counting
+                let branchRequest = BranchRequest(
+                    headers: "SDK log detection",
+                    body: message
+                )
+                self?.store.addRoundTrip(with: branchRequest, url: "/v1/open")
+            }
         }
 
         // Retrieve or create the bls_session_id
@@ -61,6 +93,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: UISceneSession Lifecycle
 
     func application(_: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options _: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        print("[BLS-AppDelegate] configurationForConnecting called")
+        let config = UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        // Explicitly set the delegate class to ensure SceneDelegate is used
+        config.delegateClass = SceneDelegate.self
+        print("[BLS-AppDelegate] Returning config with delegateClass: \(String(describing: config.delegateClass))")
+        return config
     }
 }
