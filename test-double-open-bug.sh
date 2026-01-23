@@ -31,6 +31,12 @@ OLD_API_QUEUE_DEPTHS=""
 OLD_API_REQUESTS=""
 NEW_API_QUEUE_DEPTHS=""
 NEW_API_REQUESTS=""
+OLD_API_DEBUG=""
+NEW_API_DEBUG=""
+
+# Results file
+RESULTS_FILE="DOUBLE_OPEN_TEST_RESULTS.md"
+TEST_TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 
 #===============================================================================
 # Helper Functions
