@@ -5,8 +5,9 @@
 //  Created by Nipun Singh on 2/8/24.
 //
 
-import SwiftUI
 import BranchSDK
+import BranchSwiftSDK
+import SwiftUI
 
 struct AlertItem: Identifiable {
     var id: String { message }
@@ -17,19 +18,27 @@ class DeepLinkViewModel: ObservableObject {
     @Published var deepLinkHandled = false
     @Published var deepLinkData: [String: AnyObject]? = nil
     @Published var errorItem: AlertItem? = nil
+    @Published var sessionState: String = "Uninitialized"
 }
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var deepLinkViewModel = DeepLinkViewModel()
     var store = RoundTripStore()
-    
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        
+
+    /// Reference to the modern SessionManager via BranchSessionCoordinator
+    private var sessionCoordinator: BranchSessionCoordinator {
+        BranchSessionCoordinator.shared
+    }
+
+    func application(_: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         let config = loadConfigOrDefault()
+
+        // Configure the legacy SDK for API URL and Branch Key
+        // (still needed for network layer configuration)
         Branch.setAPIUrl(config.apiUrl)
         Branch.setBranchKey(config.branchKey)
-        
-        Branch.enableLogging(at: .verbose) { msg, logLevel, err, request, response in
+
+        Branch.enableLogging(at: .verbose) { _, _, _, request, response in
             self.store.processLog(request, response)
         }
 
@@ -38,37 +47,178 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let savedId = UserDefaults.standard.string(forKey: "blsSessionId") {
             blsSessionId = savedId
         } else {
-            // Generate a new UUID if one does not exist
             blsSessionId = UUID().uuidString
             UserDefaults.standard.set(blsSessionId, forKey: "blsSessionId")
         }
-        
+
         // Set the bls_session_id in Branch request metadata
         Branch.getInstance().setRequestMetadataKey("bls_session_id", value: blsSessionId)
 
-        Branch.getInstance().initSession(launchOptions: launchOptions) { (params, error) in
-            print(params as? [String: AnyObject] ?? {})
-            if let error = error {
-                var message = "Failed to initialize Branch SDK: \(error.localizedDescription)."
-                if config.staging {
-                  message += " Are you connected to VPN?"
-                }
-                self.deepLinkViewModel.errorItem = AlertItem(message: message)
-            }
-            if let params = params as? [String: AnyObject] {
-                if let clickedBranchLink = params["+clicked_branch_link"] as? NSNumber, clickedBranchLink.boolValue == true {
-                    DispatchQueue.main.async {
-                        self.deepLinkViewModel.deepLinkData = params
-                        self.deepLinkViewModel.deepLinkHandled = true
-                    }
-                } else {
-                    print("Didn't click Branch link")
-                }
+        // Use the NEW SessionManager for initialization
+        initializeWithModernSessionManager(launchOptions: launchOptions, config: config)
 
-            }
-        }
-        
+        // Start observing session state changes
+        observeSessionState()
+
         return true
     }
-    
+
+    // MARK: - Modern SessionManager Integration
+
+    /// Initialize Branch using the new Swift SessionManager with task coalescing
+    private func initializeWithModernSessionManager(
+        launchOptions: [UIApplication.LaunchOptionsKey: Any]?,
+        config: ApiConfiguration
+    ) {
+        Task {
+            do {
+                // Build initialization options
+                var options = InitializationOptions()
+
+                // Extract URL from launch options if present
+                if let launchURL = launchOptions?[.url] as? URL {
+                    options.url = launchURL
+                }
+
+                // Extract source application if present
+                if let sourceApp = launchOptions?[.sourceApplication] as? String {
+                    options.sourceApplication = sourceApp
+                }
+
+                print("[BranchLinkSimulator] Initializing with modern SessionManager...")
+
+                // Initialize using the new SessionManager
+                let session = try await sessionCoordinator.sessionManager.initialize(options: options)
+
+                print("[BranchLinkSimulator] Session initialized: \(session)")
+
+                // Convert session to params format for UI compatibility
+                await MainActor.run {
+                    handleSessionInitialized(session, config: config)
+                }
+
+            } catch {
+                print("[BranchLinkSimulator] Session initialization failed: \(error)")
+
+                await MainActor.run {
+                    var message = "Failed to initialize Branch SDK: \(error.localizedDescription)."
+                    if config.staging {
+                        message += " Are you connected to VPN?"
+                    }
+                    self.deepLinkViewModel.errorItem = AlertItem(message: message)
+                }
+            }
+        }
+    }
+
+    /// Handle successful session initialization
+    @MainActor
+    private func handleSessionInitialized(_ session: Session, config _: ApiConfiguration) {
+        print("[BranchLinkSimulator] Session ID: \(session.id)")
+        print("[BranchLinkSimulator] Identity ID: \(session.identityId)")
+        print("[BranchLinkSimulator] Is First Session: \(session.isFirstSession)")
+
+        // Check if there's deep link data
+        if let linkData = session.linkData {
+            print("[BranchLinkSimulator] Deep link detected: \(linkData)")
+
+            // Convert to the format expected by the existing UI
+            var params: [String: AnyObject] = [:]
+            params["+clicked_branch_link"] = true as AnyObject
+            params["session_id"] = session.id as AnyObject
+            params["identity_id"] = session.identityId as AnyObject
+            params["+is_first_session"] = session.isFirstSession as AnyObject
+
+            if let url = linkData.url {
+                params["~referring_link"] = url.absoluteString as AnyObject
+            }
+
+            // Add custom parameters from link data
+            for (key, value) in linkData.parameters {
+                params[key] = value.value as AnyObject
+            }
+
+            deepLinkViewModel.deepLinkData = params
+            deepLinkViewModel.deepLinkHandled = true
+        } else {
+            print("[BranchLinkSimulator] No deep link data - organic session")
+        }
+    }
+
+    /// Observe session state changes using the new async stream API
+    private func observeSessionState() {
+        Task {
+            for await state in sessionCoordinator.sessionManager.observeState() {
+                await MainActor.run {
+                    // Use SessionState's built-in description
+                    self.deepLinkViewModel.sessionState = state.description
+                    print("[BranchLinkSimulator] State: \(state.description)")
+                }
+            }
+        }
+    }
+
+    // MARK: - Universal Links (Scene-based apps)
+
+    func application(
+        _: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+              let url = userActivity.webpageURL
+        else {
+            return false
+        }
+
+        print("[BranchLinkSimulator] Received Universal Link: \(url)")
+
+        // Handle via the new SessionManager (task coalescing will merge if initialization is in progress)
+        Task {
+            do {
+                var options = InitializationOptions()
+                options.url = url
+
+                let session = try await sessionCoordinator.sessionManager.initialize(options: options)
+
+                await MainActor.run {
+                    let config = loadConfigOrDefault()
+                    handleSessionInitialized(session, config: config)
+                }
+            } catch {
+                print("[BranchLinkSimulator] Universal Link handling failed: \(error)")
+            }
+        }
+
+        return true
+    }
+
+    // MARK: - URL Scheme Deep Links
+
+    func application(
+        _: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        print("[BranchLinkSimulator] Received URL Scheme: \(url)")
+
+        Task {
+            do {
+                var initOptions = InitializationOptions()
+                initOptions.url = url
+                initOptions.sourceApplication = options[.sourceApplication] as? String
+
+                let session = try await sessionCoordinator.sessionManager.initialize(options: initOptions)
+
+                await MainActor.run {
+                    let config = loadConfigOrDefault()
+                    handleSessionInitialized(session, config: config)
+                }
+            } catch {
+                print("[BranchLinkSimulator] URL Scheme handling failed: \(error)")
+            }
+        }
+
+        return true
+    }
 }
