@@ -18,7 +18,8 @@ class DeepLinkViewModel: ObservableObject {
     @Published var deepLinkHandled = false
     @Published var deepLinkData: [String: AnyObject]? = nil
     @Published var errorItem: AlertItem? = nil
-    @Published var sessionState: String = "Uninitialized"
+    // Note: Session state is now managed by SDK's BranchObservableState
+    // Access via: BranchSessionCoordinator.shared.observableState.stateDescription
 }
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -57,8 +58,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use the NEW SessionManager for initialization
         initializeWithModernSessionManager(launchOptions: launchOptions, config: config)
 
-        // Start observing session state changes
-        observeSessionState()
+        // Note: Session state observation is handled automatically by SDK's BranchObservableState
+        // SwiftUI views can use: @ObservedObject var branchState = BranchSessionCoordinator.shared.observableState
 
         return true
     }
@@ -142,19 +143,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             deepLinkViewModel.deepLinkHandled = true
         } else {
             print("[BranchLinkSimulator] No deep link data - organic session")
-        }
-    }
-
-    /// Observe session state changes using the new async stream API
-    private func observeSessionState() {
-        Task {
-            for await state in sessionCoordinator.sessionManager.observeState() {
-                await MainActor.run {
-                    // Use SessionState's built-in description
-                    self.deepLinkViewModel.sessionState = state.description
-                    print("[BranchLinkSimulator] State: \(state.description)")
-                }
-            }
         }
     }
 
