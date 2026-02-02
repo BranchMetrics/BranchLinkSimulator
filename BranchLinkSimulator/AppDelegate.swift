@@ -43,6 +43,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.store.processLog(request, response)
         }
 
+        // Set up logging callback for the new Swift SessionManager network layer
+        DefaultBranchNetworkService.logCallback = { [weak self] url, requestBody, responseBody, statusCode, error in
+            guard let self = self else { return }
+            self.store.processSwiftNetworkLog(
+                url: url,
+                requestBody: requestBody,
+                responseBody: responseBody,
+                statusCode: statusCode,
+                error: error
+            )
+        }
+
         // Retrieve or create the bls_session_id
         let blsSessionId: String
         if let savedId = UserDefaults.standard.string(forKey: "blsSessionId") {
