@@ -5,8 +5,9 @@
 //  Created by Nipun Singh on 2/8/24.
 //
 
-import SwiftUI
 import BranchSDK
+import BranchSwiftSDK
+import SwiftUI
 
 @main
 struct BranchLinkSimulatorApp: App {
@@ -17,9 +18,26 @@ struct BranchLinkSimulatorApp: App {
             HomeView()
                 .environmentObject(appDelegate.deepLinkViewModel)
                 .environmentObject(appDelegate.store)
-                .onOpenURL(perform: { url in
-                    Branch.getInstance().handleDeepLink(url)
-                })
+                .onOpenURL { url in
+                    // Use the modern SessionManager for consistent deep link handling
+                    // This ensures task coalescing works correctly across all entry points
+                    Task {
+                        do {
+                            var options = InitializationOptions()
+                            options.url = url
+
+                            let session = try await BranchSessionCoordinator.shared.sessionManager.initialize(options: options)
+                            print("[BranchLinkSimulator] onOpenURL handled: \(session.id)")
+
+                            // Update ViewModel on main actor
+                            await MainActor.run {
+                                appDelegate.handleSessionForUI(session)
+                            }
+                        } catch {
+                            print("[BranchLinkSimulator] onOpenURL failed: \(error)")
+                        }
+                    }
+                }
         }
     }
 }

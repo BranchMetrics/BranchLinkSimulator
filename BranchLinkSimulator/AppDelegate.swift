@@ -67,24 +67,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Modern SessionManager Integration
 
     /// Initialize Branch using the new Swift SessionManager with task coalescing
+    @MainActor
     private func initializeWithModernSessionManager(
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?,
         config: ApiConfiguration
     ) {
         Task {
             do {
-                // Build initialization options
-                var options = InitializationOptions()
-
-                // Extract URL from launch options if present
-                if let launchURL = launchOptions?[.url] as? URL {
-                    options.url = launchURL
-                }
-
-                // Extract source application if present
-                if let sourceApp = launchOptions?[.sourceApplication] as? String {
-                    options.sourceApplication = sourceApp
-                }
+                // Build initialization options using the builder pattern
+                let options = InitializationOptions()
+                    .with(launchOptions: launchOptions)
 
                 print("[BranchLinkSimulator] Initializing with modern SessionManager...")
 
@@ -110,6 +102,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+    }
+
+    /// Handle session for UI updates (called from BranchLinkSimulatorApp onOpenURL)
+    @MainActor
+    func handleSessionForUI(_ session: Session) {
+        let config = loadConfigOrDefault()
+        handleSessionInitialized(session, config: config)
     }
 
     /// Handle successful session initialization
