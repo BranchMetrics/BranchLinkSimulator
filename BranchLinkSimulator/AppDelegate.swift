@@ -26,6 +26,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var deepLinkViewModel = DeepLinkViewModel()
     var store = RoundTripStore()
 
+    /// Task for observing network logs (keeps the stream alive)
+    private var logObserverTask: Task<Void, Never>?
+
     /// Reference to the modern SessionManager via BranchSessionCoordinator
     private var sessionCoordinator: BranchSessionCoordinator {
         BranchSessionCoordinator.shared
@@ -39,21 +42,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.setAPIUrl(config.apiUrl)
         Branch.setBranchKey(config.branchKey)
 
+        // Legacy SDK logging (for events, links, QR codes)
         Branch.enableLogging(at: .verbose) { _, _, _, request, response in
             self.store.processLog(request, response)
         }
 
-        // Set up logging callback for the new Swift SessionManager network layer
-        DefaultBranchNetworkService.logCallback = { [weak self] url, requestBody, responseBody, statusCode, error in
-            guard let self = self else { return }
-            self.store.processSwiftNetworkLog(
-                url: url,
-                requestBody: requestBody,
-                responseBody: responseBody,
-                statusCode: statusCode,
-                error: error
-            )
-        }
+        // MARK: - Modern AsyncStream Logging (Swift Concurrency)
+
+        // Start observing BEFORE any Branch initialization to capture all logs
+        // This uses AsyncStream which buffers logs until observer attaches
+        startNetworkLogObserver()
 
         // Retrieve or create the bls_session_id
         let blsSessionId: String
@@ -74,6 +72,53 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // SwiftUI views can use: @ObservedObject var branchState = BranchSessionCoordinator.shared.observableState
 
         return true
+    }
+
+    // MARK: - Modern Network Log Observer (AsyncStream)
+
+    /// Start observing network logs using modern Swift Concurrency.
+    ///
+    /// This approach:
+    /// - Uses `AsyncStream` which automatically buffers logs
+    /// - Eliminates race conditions (logs captured even before observer starts)
+    /// - Uses `for await` for reactive processing
+    /// - Is fully thread-safe via Actor isolation
+    private func startNetworkLogObserver() {
+        logObserverTask = Task { [weak self] in
+            guard let self else { return }
+
+            print("[BranchLinkSimulator] Starting AsyncStream network log observer...")
+
+            // Process logs as they arrive (buffered logs flush immediately)
+            for await entry in BranchNetworkLogger.shared.logStream {
+                // Convert NetworkLogEntry to the format expected by RoundTripStore
+                await MainActor.run {
+                    self.processNetworkLogEntry(entry)
+                }
+            }
+
+            print("[BranchLinkSimulator] Network log observer ended")
+        }
+    }
+
+    /// Process a NetworkLogEntry from the modern logger
+    @MainActor
+    private func processNetworkLogEntry(_ entry: NetworkLogEntry) {
+        // Convert Sendable dictionary back to [String: Any] for compatibility
+        let requestBody = entry.requestBody as [String: Any]
+        let responseBody = entry.responseBody as? [String: Any]
+
+        store.processSwiftNetworkLog(
+            url: entry.url,
+            requestBody: requestBody,
+            responseBody: responseBody,
+            statusCode: entry.statusCode,
+            error: entry.error.map { NSError(domain: "BranchNetwork", code: -1, userInfo: [NSLocalizedDescriptionKey: $0]) }
+        )
+    }
+
+    deinit {
+        logObserverTask?.cancel()
     }
 
     // MARK: - Modern SessionManager Integration
