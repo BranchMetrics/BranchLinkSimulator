@@ -19,22 +19,23 @@ struct BranchLinkSimulatorApp: App {
                 .environmentObject(appDelegate.deepLinkViewModel)
                 .environmentObject(appDelegate.store)
                 .onOpenURL { url in
-                    // Use the modern SessionManager for consistent deep link handling
-                    // This ensures task coalescing works correctly across all entry points
-                    Task {
-                        do {
-                            var options = InitializationOptions()
-                            options.url = url
+                    // Use the Modern SessionManager for URL handling
+                    BranchLogger.shared().logVerbose("onOpenURL: \(url)", error: nil)
 
-                            let session = try await BranchSessionCoordinator.shared.sessionManager.initialize(options: options)
-                            print("[BranchLinkSimulator] onOpenURL handled: \(session.id)")
-
-                            // Update ViewModel on main actor
-                            await MainActor.run {
-                                appDelegate.handleSessionForUI(session)
+                    SessionManager.shared.handleDeepLink(url) { session, error in
+                        if let session = session {
+                            BranchLogger.shared().logDebug("onOpenURL session: \(session.id)", error: nil)
+                            // Update ViewModel for deep link handling
+                            if session.hasDeepLinkData || (session.params["+clicked_branch_link"] as? Bool ?? false) {
+                                var displayParams: [String: AnyObject] = [:]
+                                for (key, value) in session.params {
+                                    displayParams[key] = value as AnyObject
+                                }
+                                appDelegate.deepLinkViewModel.deepLinkData = displayParams
+                                appDelegate.deepLinkViewModel.deepLinkHandled = true
                             }
-                        } catch {
-                            print("[BranchLinkSimulator] onOpenURL failed: \(error)")
+                        } else if let error = error {
+                            BranchLogger.shared().logError("onOpenURL error: \(error.localizedDescription)", error: error)
                         }
                     }
                 }
