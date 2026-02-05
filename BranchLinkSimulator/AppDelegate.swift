@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var deepLinkViewModel = DeepLinkViewModel()
     var store = RoundTripStore()
 
-    /// Convenience logger
+    /// Convenience logger (Objective-C singleton)
     private var logger: BranchLogger {
         BranchLogger.shared()
     }
@@ -35,8 +35,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Branch.setAPIUrl(config.apiUrl)
         Branch.setBranchKey(config.branchKey)
 
-        // Enable verbose logging with callback for console output and RoundTripStore
-        Branch.enableLogging(at: .verbose) { message, logLevel, error, request, response in
+        // Enable verbose logging with advanced callback for console output and RoundTripStore
+        Branch.enableLogging(at: .verbose, withAdvancedCallback: { [weak self] message, logLevel, error, request, response in
             // Log to console (os_log doesn't show verbose/debug in Xcode console)
             let levelStr: String
             switch logLevel {
@@ -46,15 +46,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             case .error: levelStr = "ERROR"
             @unknown default: levelStr = "UNKNOWN"
             }
-            var fullMessage = "[BranchSDK][\(levelStr)] \(message ?? "")"
+            var fullMessage = "[BranchSDK][\(levelStr)] \(message)"
             if let error = error {
                 fullMessage += " Error: \(error.localizedDescription)"
             }
             NSLog("%@", fullMessage)
 
             // Process for RoundTripStore
-            self.store.processLog(request, response)
-        }
+            self?.store.processLog(request, response)
+        })
 
         // Retrieve or create the bls_session_id
         let blsSessionId: String
@@ -68,11 +68,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set the bls_session_id in Branch request metadata
         Branch.getInstance().setRequestMetadataKey("bls_session_id", value: blsSessionId)
 
-        // MARK: - Initialize with Branch SDK (Objective-C)
+        // MARK: - Initialize with Branch SDK (Objective-C API)
 
         logger.logVerbose("Initializing Branch SDK...", error: nil)
 
-        Branch.getInstance().initSession(launchOptions: launchOptions) { [weak self] params, error in
+        Branch.getInstance().initSession(launchOptions: launchOptions, andRegisterDeepLinkHandler: { [weak self] params, error in
             guard let self = self else { return }
 
             if let error = error {
@@ -81,7 +81,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if config.staging {
                     message += " Are you connected to VPN?"
                 }
-                self.deepLinkViewModel.errorItem = AlertItem(message: message)
+                DispatchQueue.main.async {
+                    self.deepLinkViewModel.errorItem = AlertItem(message: message)
+                }
             } else if let params = params {
                 self.logger.logVerbose("Branch SDK initialized successfully!", error: nil)
                 self.logger.logDebug("Params: \(params)", error: nil)
@@ -89,7 +91,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 // Handle deep link data if present
                 self.handleSessionParams(params)
             }
-        }
+        })
 
         return true
     }
@@ -113,8 +115,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
 
-            deepLinkViewModel.deepLinkData = displayParams
-            deepLinkViewModel.deepLinkHandled = true
+            DispatchQueue.main.async {
+                self.deepLinkViewModel.deepLinkData = displayParams
+                self.deepLinkViewModel.deepLinkHandled = true
+            }
         } else {
             logger.logVerbose("No deep link data - organic session", error: nil)
         }
