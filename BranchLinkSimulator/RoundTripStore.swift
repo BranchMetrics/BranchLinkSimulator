@@ -1,9 +1,9 @@
-import Foundation
 import BranchSDK
+import Foundation
 
 class RoundTripStore: ObservableObject {
     let FAILED = "failed to parse"
-    
+
     @Published var roundTrips: [RoundTrip] = [] {
         didSet {
             saveRoundTrips()
@@ -38,7 +38,6 @@ class RoundTripStore: ObservableObject {
         if roundTrips.count > 30 {
             roundTrips = Array(roundTrips.prefix(30))
         }
-    
     }
 
     private func sortRoundTrips() {
@@ -63,7 +62,7 @@ class RoundTripStore: ObservableObject {
             print("Failed to load round trips: \(error)")
         }
     }
-    
+
     func processLog(_ request: NSMutableURLRequest?, _ response: BNCServerResponse?) {
         if let req = request {
             let branchReq = process(request: req)
@@ -77,16 +76,16 @@ class RoundTripStore: ObservableObject {
 
     func process(request req: NSMutableURLRequest) -> BranchRequest {
         let body = req.httpBody.flatMap { String(data: $0, encoding: .utf8) }
-        
+
         return BranchRequest(
             headers: req.allHTTPHeaderFields?.description ?? FAILED,
             body: body ?? FAILED
         )
     }
-    
+
     func process(response resp: BNCServerResponse) -> BranchResponse {
         let statusCode = String(resp.statusCode.intValue)
-        
+
         var body = FAILED
         if let dictionary = resp.data as? NSDictionary {
             do {
@@ -99,5 +98,3 @@ class RoundTripStore: ObservableObject {
         return BranchResponse(statusCode: statusCode, body: body)
     }
 }
-
-

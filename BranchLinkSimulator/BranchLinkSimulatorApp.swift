@@ -5,8 +5,8 @@
 //  Created by Nipun Singh on 2/8/24.
 //
 
-import SwiftUI
 import BranchSDK
+import SwiftUI
 
 @main
 struct BranchLinkSimulatorApp: App {
@@ -17,9 +17,13 @@ struct BranchLinkSimulatorApp: App {
             HomeView()
                 .environmentObject(appDelegate.deepLinkViewModel)
                 .environmentObject(appDelegate.store)
-                .onOpenURL(perform: { url in
+                .onOpenURL { url in
+                    // Use Branch SDK for URL handling
+                    BranchLogger.shared().logVerbose("onOpenURL: \(url)", error: nil)
+
+                    // Handle the deep link - Branch SDK will call the init callback
                     Branch.getInstance().handleDeepLink(url)
-                })
+                }
         }
     }
 }
