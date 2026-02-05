@@ -6,7 +6,6 @@
 //
 
 import BranchSDK
-import BranchSwiftSDK
 import SwiftUI
 
 @main
@@ -19,25 +18,11 @@ struct BranchLinkSimulatorApp: App {
                 .environmentObject(appDelegate.deepLinkViewModel)
                 .environmentObject(appDelegate.store)
                 .onOpenURL { url in
-                    // Use the Modern SessionManager for URL handling
+                    // Use Branch SDK for URL handling
                     BranchLogger.shared().logVerbose("onOpenURL: \(url)", error: nil)
 
-                    SessionManager.shared.handleDeepLink(url) { session, error in
-                        if let session = session {
-                            BranchLogger.shared().logDebug("onOpenURL session: \(session.id)", error: nil)
-                            // Update ViewModel for deep link handling
-                            if session.hasDeepLinkData || (session.params["+clicked_branch_link"] as? Bool ?? false) {
-                                var displayParams: [String: AnyObject] = [:]
-                                for (key, value) in session.params {
-                                    displayParams[key] = value as AnyObject
-                                }
-                                appDelegate.deepLinkViewModel.deepLinkData = displayParams
-                                appDelegate.deepLinkViewModel.deepLinkHandled = true
-                            }
-                        } else if let error = error {
-                            BranchLogger.shared().logError("onOpenURL error: \(error.localizedDescription)", error: error)
-                        }
-                    }
+                    // Handle the deep link - Branch SDK will call the init callback
+                    Branch.getInstance().handleDeepLink(url)
                 }
         }
     }

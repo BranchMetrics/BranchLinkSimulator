@@ -6,7 +6,6 @@
 //
 
 import BranchSDK
-import BranchSwiftSDK
 import SwiftUI
 
 struct AlertItem: Identifiable {
@@ -23,11 +22,6 @@ class DeepLinkViewModel: ObservableObject {
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var deepLinkViewModel = DeepLinkViewModel()
     var store = RoundTripStore()
-
-    /// Reference to the modern SessionManager
-    private var sessionManager: SessionManager {
-        SessionManager.shared
-    }
 
     /// Convenience logger
     private var logger: BranchLogger {
@@ -74,37 +68,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set the bls_session_id in Branch request metadata
         Branch.getInstance().setRequestMetadataKey("bls_session_id", value: blsSessionId)
 
-        // MARK: - Initialize with Modern SessionManager
+        // MARK: - Initialize with Branch SDK (Objective-C)
 
-        // Use the new Swift SessionManager for initialization
-        // This provides task coalescing, async/await support, and syncs to BNCPreferenceHelper
-        // so that Legacy SDK features (events, links, QR codes) continue to work
+        logger.logVerbose("Initializing Branch SDK...", error: nil)
 
-        let options = InitializationOptions()
-            .with(launchOptions: launchOptions)
-
-        logger.logVerbose("Initializing with Modern SessionManager...", error: nil)
-
-        sessionManager.initialize(options: options) { [weak self] session, error in
+        Branch.getInstance().initSession(launchOptions: launchOptions) { [weak self] params, error in
             guard let self = self else { return }
 
             if let error = error {
-                self.logger.logError("SessionManager init error: \(error.localizedDescription)", error: error)
+                self.logger.logError("Branch init error: \(error.localizedDescription)", error: error)
                 var message = "Failed to initialize Branch SDK: \(error.localizedDescription)."
                 if config.staging {
                     message += " Are you connected to VPN?"
                 }
                 self.deepLinkViewModel.errorItem = AlertItem(message: message)
-            } else if let session = session {
-                self.logger.logVerbose("SessionManager initialized successfully!", error: nil)
-                self.logger.logDebug("Session ID: \(session.id)", error: nil)
-                self.logger.logDebug("Identity ID: \(session.identityId)", error: nil)
-                self.logger.logDebug("Device Fingerprint: \(session.deviceFingerprintId)", error: nil)
-                self.logger.logDebug("Is First Session: \(session.isFirstSession)", error: nil)
-                self.logger.logDebug("Params: \(session.params)", error: nil)
+            } else if let params = params {
+                self.logger.logVerbose("Branch SDK initialized successfully!", error: nil)
+                self.logger.logDebug("Params: \(params)", error: nil)
 
                 // Handle deep link data if present
-                self.handleSessionInitialized(session)
+                self.handleSessionParams(params)
             }
         }
 
@@ -114,24 +97,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Session Handling
 
     /// Handle successful session initialization
-    private func handleSessionInitialized(_ session: Session) {
+    private func handleSessionParams(_ params: [AnyHashable: Any]) {
         // Check if there's deep link data
-        let clickedBranchLink = session.params["+clicked_branch_link"] as? Bool ?? false
+        let clickedBranchLink = params["+clicked_branch_link"] as? Bool ?? false
 
-        if clickedBranchLink || session.hasDeepLinkData {
+        if clickedBranchLink {
             logger.logVerbose("Deep link detected!", error: nil)
-            logger.logDebug("Deep link params: \(session.params)", error: nil)
+            logger.logDebug("Deep link params: \(params)", error: nil)
 
             // Convert params to the format expected by the UI
             var displayParams: [String: AnyObject] = [:]
-            displayParams["+clicked_branch_link"] = true as AnyObject
-            displayParams["session_id"] = session.id as AnyObject
-            displayParams["identity_id"] = session.identityId as AnyObject
-            displayParams["+is_first_session"] = session.isFirstSession as AnyObject
-
-            // Copy all params from session
-            for (key, value) in session.params {
-                displayParams[key] = value as AnyObject
+            for (key, value) in params {
+                if let stringKey = key as? String {
+                    displayParams[stringKey] = value as AnyObject
+                }
             }
 
             deepLinkViewModel.deepLinkData = displayParams
@@ -156,14 +135,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         logger.logVerbose("Received Universal Link: \(url)", error: nil)
 
-        // Handle via Modern SessionManager
-        sessionManager.handleDeepLink(url) { [weak self] session, error in
-            if let session = session {
-                self?.handleSessionInitialized(session)
-            } else if let error = error {
-                self?.logger.logError("Universal Link error: \(error.localizedDescription)", error: error)
-            }
-        }
+        // Handle via Branch SDK
+        Branch.getInstance().handleDeepLink(url)
 
         return true
     }
@@ -177,14 +150,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         logger.logVerbose("Received URL Scheme: \(url)", error: nil)
 
-        // Handle via Modern SessionManager
-        sessionManager.handleDeepLink(url) { [weak self] session, error in
-            if let session = session {
-                self?.handleSessionInitialized(session)
-            } else if let error = error {
-                self?.logger.logError("URL Scheme error: \(error.localizedDescription)", error: error)
-            }
-        }
+        // Handle via Branch SDK
+        Branch.getInstance().handleDeepLink(url)
 
         return true
     }

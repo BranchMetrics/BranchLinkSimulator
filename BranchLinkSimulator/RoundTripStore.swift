@@ -74,51 +74,6 @@ class RoundTripStore: ObservableObject {
         }
     }
 
-    /// Process network logs from the new Swift SessionManager
-    func processSwiftNetworkLog(
-        url: String,
-        requestBody: [String: Any],
-        responseBody: [String: Any]?,
-        statusCode: Int?,
-        error: Error?
-    ) {
-        // Convert request body to pretty JSON string
-        var requestBodyString = FAILED
-        if let jsonData = try? JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted),
-           let jsonString = String(data: jsonData, encoding: .utf8)
-        {
-            requestBodyString = jsonString
-        }
-
-        let branchRequest = BranchRequest(
-            headers: "[Swift SessionManager - POST]",
-            body: requestBodyString
-        )
-
-        addRoundTrip(with: branchRequest, url: url)
-
-        // Add response if available
-        if let responseBody = responseBody {
-            var responseBodyString = FAILED
-            if let jsonData = try? JSONSerialization.data(withJSONObject: responseBody, options: .prettyPrinted),
-               let jsonString = String(data: jsonData, encoding: .utf8)
-            {
-                responseBodyString = jsonString
-            }
-
-            let statusCodeString = statusCode.map { String($0) } ?? FAILED
-            let branchResponse = BranchResponse(statusCode: statusCodeString, body: responseBodyString)
-            addResponse(branchResponse)
-        } else if let error = error {
-            // Add error response
-            let branchResponse = BranchResponse(
-                statusCode: statusCode.map { String($0) } ?? "Error",
-                body: "Error: \(error.localizedDescription)"
-            )
-            addResponse(branchResponse)
-        }
-    }
-
     func process(request req: NSMutableURLRequest) -> BranchRequest {
         let body = req.httpBody.flatMap { String(data: $0, encoding: .utf8) }
 
