@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,6 +12,7 @@
 		422D523D2CEFBAD60027F9D7 /* RoundTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 422D523C2CEFBAD60027F9D7 /* RoundTripView.swift */; };
 		428539352CF69D8A00084545 /* RoundTrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428539342CF69D8A00084545 /* RoundTrip.swift */; };
 		428539372CF69E2300084545 /* RoundTripStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428539362CF69E2300084545 /* RoundTripStore.swift */; };
+		4DE1E3422F3B35A200F0F7F3 /* BranchSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 4DE1E3412F3B35A200F0F7F3 /* BranchSDK */; };
 		C16B978F2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B978E2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift */; };
 		C16B97912B759F9D00FB0631 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B97902B759F9D00FB0631 /* HomeView.swift */; };
 		C16B97932B759F9E00FB0631 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C16B97922B759F9E00FB0631 /* Assets.xcassets */; };
@@ -19,8 +20,6 @@
 		C16B97A02B75A0FA00FB0631 /* DeeplinkDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B979F2B75A0FA00FB0631 /* DeeplinkDetailView.swift */; };
 		C16B97A22B75A18A00FB0631 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B97A12B75A18A00FB0631 /* AppDelegate.swift */; };
 		C16B97B22B87BD8300FB0631 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C16B97B02B87BD8000FB0631 /* AdSupport.framework */; };
-		E78DBA1F2E9786B1009FE663 /* BranchSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E78DBA1E2E9786B1009FE663 /* BranchSDK.xcframework */; };
-		E78DBA202E9786B1009FE663 /* BranchSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E78DBA1E2E9786B1009FE663 /* BranchSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E7EA36B22DD63A350094FCC9 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7EA36B12DD63A350094FCC9 /* SafariServices.framework */; };
 /* End PBXBuildFile section */
 
@@ -31,7 +30,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				E78DBA202E9786B1009FE663 /* BranchSDK.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -44,6 +42,7 @@
 		422D523C2CEFBAD60027F9D7 /* RoundTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundTripView.swift; sourceTree = "<group>"; };
 		428539342CF69D8A00084545 /* RoundTrip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundTrip.swift; sourceTree = "<group>"; };
 		428539362CF69E2300084545 /* RoundTripStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundTripStore.swift; sourceTree = "<group>"; };
+		4DE1E33E2F3B2F6D00F0F7F3 /* BranchLinkSimulatorDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BranchLinkSimulatorDebug.entitlements; sourceTree = "<group>"; };
 		C16B978B2B759F9D00FB0631 /* BranchLinkSimulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BranchLinkSimulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C16B978E2B759F9D00FB0631 /* BranchLinkSimulatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BranchLinkSimulatorApp.swift; sourceTree = "<group>"; };
 		C16B97902B759F9D00FB0631 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -54,7 +53,6 @@
 		C16B97A52B75A4F800FB0631 /* BranchLinkSimulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BranchLinkSimulator.entitlements; sourceTree = "<group>"; };
 		C16B97A62B75A5F700FB0631 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C16B97B02B87BD8000FB0631 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
-		E78DBA1E2E9786B1009FE663 /* BranchSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = BranchSDK.xcframework; path = Frameworks/BranchSDK.xcframework; sourceTree = "<group>"; };
 		E7EA36B12DD63A350094FCC9 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -63,8 +61,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4DE1E3422F3B35A200F0F7F3 /* BranchSDK in Frameworks */,
 				E7EA36B22DD63A350094FCC9 /* SafariServices.framework in Frameworks */,
-				E78DBA1F2E9786B1009FE663 /* BranchSDK.xcframework in Frameworks */,
 				C16B97B22B87BD8300FB0631 /* AdSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -92,6 +90,7 @@
 		C16B978D2B759F9D00FB0631 /* BranchLinkSimulator */ = {
 			isa = PBXGroup;
 			children = (
+				4DE1E33E2F3B2F6D00F0F7F3 /* BranchLinkSimulatorDebug.entitlements */,
 				C16B97A62B75A5F700FB0631 /* Info.plist */,
 				C16B97A52B75A4F800FB0631 /* BranchLinkSimulator.entitlements */,
 				C16B97A12B75A18A00FB0631 /* AppDelegate.swift */,
@@ -120,7 +119,6 @@
 		C16B97AF2B87BD8000FB0631 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E78DBA1E2E9786B1009FE663 /* BranchSDK.xcframework */,
 				E7EA36B12DD63A350094FCC9 /* SafariServices.framework */,
 				C16B97B02B87BD8000FB0631 /* AdSupport.framework */,
 			);
@@ -145,6 +143,7 @@
 			);
 			name = BranchLinkSimulator;
 			packageProductDependencies = (
+				4DE1E3412F3B35A200F0F7F3 /* BranchSDK */,
 			);
 			productName = BranchLinkSimulator;
 			productReference = C16B978B2B759F9D00FB0631 /* BranchLinkSimulator.app */;
@@ -175,6 +174,7 @@
 			);
 			mainGroup = C16B97822B759F9D00FB0631;
 			packageReferences = (
+				4DE1E3402F3B35A200F0F7F3 /* XCLocalSwiftPackageReference "../ios-branch-deep-linking-attribution" */,
 			);
 			productRefGroup = C16B978C2B759F9D00FB0631 /* Products */;
 			projectDirPath = "";
@@ -341,14 +341,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = BranchLinkSimulator/BranchLinkSimulator.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution: Branch Metrics, Inc. (R63EM248DP)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution: Branch Metrics, Inc. (R63EM248DP)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = BranchLinkSimulator/BranchLinkSimulatorDebug.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"BranchLinkSimulator/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = R63EM248DP;
+				DEVELOPMENT_TEAM = R63EM248DP;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BranchLinkSimulator/Info.plist;
@@ -368,7 +366,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "io.branch.link-simulator";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Branch Link Simulator - Distribution";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -442,6 +439,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		4DE1E3402F3B35A200F0F7F3 /* XCLocalSwiftPackageReference "../ios-branch-deep-linking-attribution" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../ios-branch-deep-linking-attribution";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4DE1E3412F3B35A200F0F7F3 /* BranchSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BranchSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C16B97832B759F9D00FB0631 /* Project object */;
 }

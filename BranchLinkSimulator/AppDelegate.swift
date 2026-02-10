@@ -24,13 +24,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var store = RoundTripStore()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        
         let config = loadConfigOrDefault()
+        Branch.disableNextForeground(forTimeInterval: 30.0)
+        //Branch.resumeSession()
         Branch.setAPIUrl(config.apiUrl)
         Branch.setBranchKey(config.branchKey)
         
         Branch.enableLogging(at: .verbose) { msg, logLevel, err, request, response in
             self.store.processLog(request, response)
+        }
+        
+        
+        
+        Branch.setCallbackForTracingRequests { (uri, request, response, error, requestUrl) in
+            print("Tracing Callback Start ********************")
+            print("URI: \(uri ?? "nil")")
+            print("Request: \(request ?? [:])")
+            print("Response: \(response ?? [:])")
+            print("Error: \(error?.localizedDescription ?? "nil")")
+            print("Request URL: \(requestUrl ?? "nil")")
+            print("Tracing Callback End ********************")
         }
 
         // Retrieve or create the bls_session_id
