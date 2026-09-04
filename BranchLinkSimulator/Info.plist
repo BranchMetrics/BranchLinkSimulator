@@ -36,5 +36,7 @@
 		<string>hop.link</string>
 		<string>app.hop.link</string>
 	</array>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This app uses tracking to provide better attribution and personalized experiences. Your data helps us improve our services.</string>
 </dict>
 </plist>
