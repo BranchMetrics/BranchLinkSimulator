@@ -14,6 +14,8 @@
 		<string>r3dfg.app.link</string>
 		<string>applinks:hop.link</string>
 		<string>hop.link</string>
+		<string>applinks:app.hop.link</string>
+		<string>app.hop.link</string>
 		<string>skhsg.branchbeta.link</string>
 		<string>applinks:skhsg.branchbeta.link</string>
 		<string>applinks:stage-freedom.branchbeta.link</string>
