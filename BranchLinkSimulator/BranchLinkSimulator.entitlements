@@ -42,6 +42,10 @@
 		<string>prod-ac-sandbox-alternate.app.link</string>
 		<string>applinks:prod-ac-sandbox-alternate.app.link</string>
 		<string>prod-ac-sandbox.test.app.link</string>
+		<string>applinks:no-os-alternate.app.link</string>
+		<string>no-os-alternate.app.link</string>
+		<string>applinks:cy19n-alternate.branchbeta.link</string>
+		<string>cy19n-alternate.branchbeta.link</string>
 	</array>
 </dict>
 </plist>
