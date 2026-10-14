@@ -22,9 +22,25 @@ let STAGING_AC = "[Stage] Adv. Compliance Sandbox"
 let PRODUCTION_AC = "Adv. Compliance Sandbox"
 let STAGING_ACTIVATION = "[Stage] Activation Demo"
 let PRODUCTION_ACTIVATION = "Activation Demo"
+let STAGING_NO_OS_DEEPLINKING = "[Stage] No OS Deeplinking"
+let PRODUCTION_NO_OS_DEEPLINKING = "No OS Deeplinking"
 
 
 var apiConfigurationsMap: [String: ApiConfiguration] = [
+    STAGING_NO_OS_DEEPLINKING: ApiConfiguration(
+        name: STAGING_NO_OS_DEEPLINKING,
+        branchKey: "key_live_ozDLMYWB0yxXOmMFPFMGDbbkqseV3c1Q",
+        apiUrl: "https://api.stage.branch.io",
+        appId: "1638702825431126734",
+        staging: true
+    ),
+    PRODUCTION_NO_OS_DEEPLINKING: ApiConfiguration(
+        name: PRODUCTION_NO_OS_DEEPLINKING,
+        branchKey: "key_live_kttML9YtXgiSHaDVwIhNQajeDrkMBiDJ",
+        apiUrl: "https://api3.branch.io",
+        appId: "1638679721866711622",
+        staging: false
+    ),
     STAGING_ACTIVATION: ApiConfiguration(
         name: STAGING_ACTIVATION,
         branchKey: "key_live_nFc30jPoTV53LhvHat5XXffntufA4O0l",
